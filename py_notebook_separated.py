@@ -20,11 +20,19 @@ image = cv2.imread('images/pbear1.jpg')
 # im_arr = np.asarray(image)
 # new_image = np.zeros(image.shape, image.dtype)
 
-alpha = 1.5 # Simple contrast control
-beta = 10.0    # Simple brightness control
+alpha = 1.0 # Simple contrast control
+beta = 50.0    # Simple brightness control
 
 new_image = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
 
+print("new image array: ")
+print(new_image.shape)
+
+# for i in range(683):
+#     for j in range(1024):
+#         for k in range(3):
+#             if image[i][j][k] < abs(beta):
+#                 print(new_image[i][j])
 hist_before = cv2.calcHist([cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)],[0],None,[256],[0,256])
 hist_after = cv2.calcHist([cv2.cvtColor(new_image, cv2.COLOR_BGR2GRAY)],[0],None,[256],[0,256])
 
