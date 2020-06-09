@@ -81,7 +81,7 @@ def convert_to_grayscale_with_noise(src, dst):
 ### APPLIES 4 DIFFERENT VALUES OF GAMMA
 def adjust_gamma(src, dst):
     
-    gamma_values = [0.3, 0.7, 1.3, 1.7]
+    gamma_values = [0.3, 0.7, 2.0, 3.0]
 
     for item in os.listdir(src):
 
@@ -131,31 +131,14 @@ def file_counter():
 
 def main():
     
-    src = r'C:\Users\Tim\Documents\Programmering\python\image augmentation\images2'
-    dst = r'C:\Users\Tim\Documents\Programmering\python\image augmentation\images_dst'
-    gamma_values = [0.3, 0.7, 1.3, 1.7]
-    images = []
-    gamma_histograms = []
-
-    img = cv2.imread('images/pbear1.jpg')
-
+    src = r'C:\Users\A560655\Documents\datasets\bird_polar bear'
+    dst = r'C:\Users\A560655\Documents\datasets\augmented bird_polar bear'
+    
     adjust_gamma(src, dst)
-    # convert_to_grayscale(src, dst)
-    # convert_to_grayscale_with_noise(src, dst)
-    # copy_original_files(src, dst)
-
-    # for i in range(len(gamma_values)):
-    #     gam_img = adjust_gamma(img, gamma_values[i])
-    #     images.append(gam_img)
-        # gamma_histograms.append(plot_histograms_for_image(gam_img, gamma=gamma_values[i]))
-        
-
-    # fig1 = plot_histograms_for_image(img, gamma=1.0)
-    # plt.show(fig1)
-    # cv2.imshow("original image", img)
-    # cv2.imshow("brighter image", brighter_img)
-    # cv2.waitKey(0)
-
+    convert_to_grayscale(src, dst)
+    convert_to_grayscale_with_noise(src, dst)
+    copy_original_files(src, dst)
+    
 
 if __name__ == "__main__":
     main()
