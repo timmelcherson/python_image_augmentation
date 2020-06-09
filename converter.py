@@ -131,8 +131,8 @@ def file_counter():
 
 def main():
     
-    src = r'D:\datasets\OIDv4_ToolKit\OID\Dataset\train\Bird_Polar bear'
-    dst = r'D:\datasets\Bird_Polar bear'
+    src = r'C:\Users\Tim\Documents\Programmering\python\image augmentation\images2'
+    dst = r'C:\Users\Tim\Documents\Programmering\python\image augmentation\images_dst'
     gamma_values = [0.3, 0.7, 1.3, 1.7]
     images = []
     gamma_histograms = []
@@ -140,9 +140,9 @@ def main():
     img = cv2.imread('images/pbear1.jpg')
 
     adjust_gamma(src, dst)
-    convert_to_grayscale(src, dst)
-    convert_to_grayscale_with_noise(src, dst)
-    copy_original_files(src, dst)
+    # convert_to_grayscale(src, dst)
+    # convert_to_grayscale_with_noise(src, dst)
+    # copy_original_files(src, dst)
 
     # for i in range(len(gamma_values)):
     #     gam_img = adjust_gamma(img, gamma_values[i])

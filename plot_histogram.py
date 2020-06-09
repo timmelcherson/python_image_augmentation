@@ -39,10 +39,19 @@ def main():
     images = []
     gamma_histograms = []
 
-    img = cv2.imread('images/pbear1.jpg')
+    img1 = cv2.imread('images_dst/bird1.jpg')
+    img2 = cv2.imread('images_dst/bird1_ga_03.jpg')
+    img3 = cv2.imread('images_dst/bird1_ga_17.jpg')
+
+    
+    fig1 = plot_histograms_for_image(img1, gamma=1)
+    fig2 = plot_histograms_for_image(img2, gamma=0.3)
+    fig3 = plot_histograms_for_image(img3, gamma=1.7)
 
     # fig1 = plot_histograms_for_image(img, gamma=1.0)
-    # plt.show(fig1)
+    plt.show(fig1)
+    plt.show(fig2)
+    plt.show(fig3)
     # cv2.imshow("original image", img)
     # cv2.imshow("brighter image", brighter_img)
     # cv2.waitKey(0)
