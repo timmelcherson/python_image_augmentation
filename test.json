@@ -1,0 +1,55 @@
+{
+	"data": [
+		{
+			"frame_id": 1,
+			"filename": "data/test/5b6f186dac09581b_ga_30.jpg",
+			"objects": [
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.480656,
+						"center_y": 0.596197,
+						"width": 0.397899,
+						"height": 0.639538
+					},
+					"confidence": 0.985541
+				}
+			]
+		},
+		{
+			"frame_id": 2,
+			"filename": "data/test/12a69657c24293e9_gn_03.jpg",
+			"objects": [
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.43638,
+						"center_y": 0.524259,
+						"width": 0.573445,
+						"height": 0.460826
+					},
+					"confidence": 0.943474
+				}
+			]
+		},
+		{
+			"frame_id": 3,
+			"filename": "data/test/677b1ab8b3bb565a_gn_02.jpg",
+			"objects": [
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.671394,
+						"center_y": 0.554563,
+						"width": 0.671426,
+						"height": 0.867466
+					},
+					"confidence": 0.990344
+				}
+			]
+		}
+	]
+}
