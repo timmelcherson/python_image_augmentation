@@ -35,7 +35,7 @@ def file_counter():
 
 
 def main():
-    src=r'C:\Users\A560655\Documents\datasets\bird_polar bear'
+    src = r'C:\Users\A560655\Documents\datasets\augmented_test_images'
     remove_augmented_files(src)
 
 
