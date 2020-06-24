@@ -52,9 +52,11 @@ def read_json_file(src):
 
 
 def bb_intersection_over_union(boxA, boxB):
-	# determine the (x, y)-coordinates of the intersection rectangle
+	# determine the (x, y)-coordinates of the intersection rectangle 
+    # remember (0, 0) is top left and (1, 1) is bottom right for  our data
 	xA = max(boxA[0], boxB[0])
 	yA = max(boxA[1], boxB[1])
+    
 	xB = min(boxA[2], boxB[2])
 	yB = min(boxA[3], boxB[3])
 	# compute the area of intersection rectangle
