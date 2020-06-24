@@ -12,7 +12,7 @@ from itertools import count
 
 
 GLOBAL_COUNTER = count()
-TOTAL_AMOUNT_OF_FILES = 1980 + 1980*1 + 1980*3 + 1980*4
+# TOTAL_AMOUNT_OF_FILES = 1980 + 1980*1 + 1980*3 + 1980*4
 
 ### IMAGE CONVERTER TO GRAYSCALE
 def convert_to_grayscale(src, dst):
@@ -126,13 +126,13 @@ def copy_original_files(src, dst):
         file_counter()
 
 def file_counter():
-    print("{} of {} files completed.".format(next(GLOBAL_COUNTER), TOTAL_AMOUNT_OF_FILES))
+    print("{} files completed.".format(next(GLOBAL_COUNTER)))
     
 
 def main():
     
-    src = r'C:\Users\A560655\Documents\datasets\bird_polar bear'
-    dst = r'C:\Users\A560655\Documents\datasets\augmented bird_polar bear'
+    src = r'C:\Users\A560655\Documents\datasets\test_images2'
+    dst = r'C:\Users\A560655\Documents\datasets\augmented_test_images2'
     
     adjust_gamma(src, dst)
     convert_to_grayscale(src, dst)
