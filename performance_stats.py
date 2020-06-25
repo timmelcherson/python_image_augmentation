@@ -3,50 +3,45 @@ import numpy as np
 import glob
 import json
 
+
+######### Read ground truth values from each images respective txt file
 def read_txt_file_content(src):
 
-    # counter = 0
-
     coordinates = {}
+    coordinate_list = []
 
-    filename = (src.split('/')[1]).split('.')[0]
+    file_list = glob.glob(src + "*.txt")
+    
+    for file_path in file_list:
 
-    # file_list = glob.glob("augmented_test_set_2_txtfiles/*.txt")
-    with open(src, 'r') as file_input:
-        data = file_input.read().split()
-        print(len(file_input.readlines()))
-        left = float(data[1]) - float(data[3]) / 2
-        top = float(data[2]) - float(data[4]) / 2
-        right = float(data[1]) + float(data[3]) / 2
-        bottom = float(data[2]) + float(data[4]) / 2
-        coordinates[filename] = [left, top, bottom, right]
-    # Save coordinates in a list of 4 as: left top right bottom
-    # for file_path in file_list:
+        filename = (file_path.split('\\')[1]).split('.')[0]
 
-    #     filename = (file_path.split('\\')[1]).split('.')[0]
+        print(filename)
 
-    #     # if counter >= 3:
-    #     #     break
+        with open(file_path, 'r') as file_input:
+            
+            lines = file_input.read().splitlines()
 
-    #     # center_x, center_y, width, height
-    #     with open(file_path, 'r') as file_input:
-    #         data = file_input.read().split()
-    #         # print(data)
-    #         left = float(data[1]) - float(data[3]) / 2
-    #         top = float(data[2]) - float(data[4]) / 2
-    #         right = float(data[1]) + float(data[3]) / 2
-    #         bottom = float(data[2]) + float(data[4]) / 2
-    #         coordinates[filename] = [left, top, bottom, right]
-        
-        # counter += 1
-        
+            # coordinates are stoored as center_x, center_y, width, height
+            for entry in lines:
+                entry_split = entry.split()
+                # print("entry at index: " + str(index) + ", is: " + str(entry_split[1]))
+                left = float(entry_split[1]) - float(entry_split[3]) / 2
+                top = float(entry_split[2]) - float(entry_split[4]) / 2
+                right = float(entry_split[1]) + float(entry_split[3]) / 2
+                bottom = float(entry_split[2]) + float(entry_split[4]) / 2
+                coordinate_list.append([left, top, right, bottom])
+
+            coordinates[filename] = coordinate_list
+    
     return coordinates
     
 
-
+######### Read the results from test batch
 def read_json_file(src):
 
     coordinates = {}
+    coordinate_list = []
     
     with open(src) as f:
         data = json.load(f)
@@ -60,86 +55,93 @@ def read_json_file(src):
             top = item['relative_coordinates']['center_y'] - (item['relative_coordinates']['height'] / 2)
             right = item['relative_coordinates']['center_x'] + (item['relative_coordinates']['width'] / 2)
             bottom = item['relative_coordinates']['center_y'] + (item['relative_coordinates']['height'] / 2)
-            coordinates[filename] = [left, top, right, bottom]
+            coordinate_list.append([left, top, right, bottom])
+
+        coordinates[filename] = coordinate_list
 
     return coordinates
 
-def calc_all_iou_values(dictA, dictB):
 
-    print("in calc function")
-    setA = set(dictA)
-    setB = set(dictB)
-    print("set A: " + str(setA))
+######### Calculate the IoU for each image
+def calc_all_iou_values(groundTruth, prediction):
 
-    print("set B: " + str(setB))
+    setA = set(groundTruth)
+    setB = set(prediction)
+
     iou_dict = {}
 
     for key in setA.intersection(setB):
-        print("Key: " + key)
-        iou = bb_intersection_over_union(dictA[key], dictB[key])
+        # print("Key: " + key)
+        iou = bb_intersection_over_union(groundTruth[key], prediction[key])
         iou_dict[key] = iou
+        print("File: " + key + ", has total IoU: " + str(iou))
         setA.remove(key)
         setB.remove(key)
-        # print("setA len: " + str(len(setA)) + ", and setB len: " + str(len(setB)))
 
     return iou_dict
 
-def bb_intersection_over_union(boxA, boxB):
-<<<<<<< HEAD
-	# determine the (x, y)-coordinates of the intersection rectangle 
+def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
+    # determine the (x, y)-coordinates of the intersection rectangle 
     # remember (0, 0) is top left and (1, 1) is bottom right for  our data
-	xA = max(boxA[0], boxB[0])
-	yA = max(boxA[1], boxB[1])
     
-	xB = min(boxA[2], boxB[2])
-	yB = min(boxA[3], boxB[3])
-=======
+    total_groundtruth_area = 0
+    total_prediction_area = 0
+    total_intersection_area = 0
 
-    print("in intersect function")
-	# # determine the (x, y)-coordinates of the intersection rectangle
-    print("Box A: " + str(boxA))
-    print("Box B: " + str(boxB))
-    xA = max(boxA[0], boxB[0])
-    yA = max(boxA[1], boxB[1])
-    xB = min(boxA[2], boxB[2])
-    yB = min(boxA[3], boxB[3])
+    for index, prediction in enumerate(predictionBoxes):
+        for index, groundTruth in enumerate(groundTruthBoxes):
 
-    print("(xA, yA): " + "(" + str(xA) + ", " + str(yA) + ")")
-    print("(xB, yB): " + "(" + str(xB) + ", " + str(yB) + ")")
->>>>>>> 693757e60b95038c109b52b7affde969b1f0b4df
-	# compute the area of intersection rectangle
-    interArea = max(0, xB - xA) * max(0, yB - yA)
+            xA = max(groundTruth[0], prediction[0])
+            yA = max(groundTruth[1], prediction[1])
+
+            xB = min(groundTruth[2], prediction[2])
+            yB = min(groundTruth[3], prediction[3])
+
+            # compute the area of intersection rectangle
+            interArea = max(0, xB - xA) * max(0, yB - yA)
+            
+            # compute the area of both the prediction and ground-truth
+            # rectangles
+            groundTruthArea = (groundTruth[2] - groundTruth[0]) * (groundTruth[3] - groundTruth[1])
+            predictionArea = (prediction[2] - prediction[0]) * (prediction[3] - prediction[1])
+            # print("groundTruth area: " + str(groundTruthArea))
+            # print("prediction area: " + str(predictionArea))
+            
+            total_groundtruth_area += groundTruthArea
+            total_prediction_area += predictionArea
+            total_intersection_area += interArea
     
-    print("interArea: " + str(interArea))
-	# compute the area of both the prediction and ground-truth
-	# rectangles
-    boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
-    boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
-    print("boxAArea: " + str(boxAArea))
-    print("boxBArea: " + str(boxBArea))
-	# compute the intersection over union by taking the intersection
-	# area and dividing it by the sum of prediction + ground-truth
-	# areas - the interesection area
-    iou = interArea / float(boxAArea + boxBArea - interArea)
-    print("iou: " + str(iou))
-	# return the intersection over union value
-    return iou
+    total_iou = total_intersection_area / float(total_groundtruth_area + total_prediction_area - total_intersection_area)
+    # print("Total IoU: " + str(total_iou) + "\n")
+    return total_iou
 
 
 def main():
     
-    txtSrc1 = 'augmented_test_set_2_txtfiles'
-    txtSrc2 = 'augmented_test_set_3_txtfiles'
-    jsonSrc1 = 'result_from_test_set_2.json'
-    jsonSrc2 = 'result_from_test_set_3.json'
+    txtSrc1 = 'augmented_test_set_2_txtfiles/'   # Ran 2 test batches to get even more spread of results, 
+    txtSrc2 = 'augmented_test_set_3_txtfiles/'   # since test set 2 was used for mAP during training
+    jsonSrc1 = 'result_from_test_set_2.json'    # Results from test set 2
+    jsonSrc2 = 'result_from_test_set_3.json'    # Results from test set 3
     testJson = 'test.json'
-    testTxt = 'augmented_test_set_2_txtfiles/ebb0c82da028690d_gr.txt'
+    testTxt = 'test_files/'
 
-    groundTruthCoordinates1 = read_txt_file_content(testTxt)
+    # groundTruthCoordinates1 = read_txt_file_content(txtSrc1)
     # groundTruthCoordinates2 = read_txt_file_content(txtSrc2)
     # predictedCoordinates1 = read_json_file(jsonSrc1)
     # predictedCoordinates2 = read_json_file(jsonSrc2)
+
+    # print(groundTruthCoordinates1)
+    # print("From list 1:")
+    # for i in range(5):
+    #     print(groundTruthCoordinates1[i])
+
+    # print("From list 2:")
+    # for i in range(5):
+    #     print(predictedCoordinates1[i])
+
+    testGroundtruth = read_txt_file_content(testTxt)
     testCoordinates = read_json_file(testJson)
+    
     predictedAccuracies = {}
     
     # all_iou_values1 = calc_all_iou_values(groundTruthCoordinates1, predictedCoordinates1)
@@ -147,7 +149,7 @@ def main():
     #     groundTruthCoordinates2, predictedCoordinates2)
     
     # test_values = calc_all_iou_values(
-        # groundTruthCoordinates1, testCoordinates)
+    #     groundTruthCoordinates1, testCoordinates)
     
     # print("From list 1:")
     # for i in range(5):

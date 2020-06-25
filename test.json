@@ -1,32 +1,89 @@
 {
 	"result_data": [
 		{
-			"frame_id": 128,
-			"filename": "data/test/ebb0c82da028690d_gr.jpg",
-			"objects": [
-				{
-					"class_id": 1,
-					"name": "Polar bear",
-					"relative_coordinates": {
-						"center_x": 0.706423,
-						"center_y": 0.471755,
-						"width": 0.398549,
-						"height": 0.328751
-					},
-					"confidence": 0.963950
-				},
-				{
-					"class_id": 1,
-					"name": "Polar bear",
-					"relative_coordinates": {
-						"center_x": 0.599495,
-						"center_y": 0.481577,
-						"width": 0.211656,
-						"height": 0.266254
-					},
-					"confidence": 0.943168
-				}
-			]
-		}
+            "frame_id": 887,
+            "filename": "data/test/0c3f3e55551d7a38.jpg",
+            "objects": [
+                {
+                    "class_id": 1,
+                    "name": "Polar bear",
+                    "relative_coordinates": {
+                        "center_x": 0.489227,
+                        "center_y": 0.550165,
+                        "width": 0.848073,
+                        "height": 0.809142
+                    },
+                    "confidence": 0.978346
+                }
+            ]
+        },
+        {
+            "frame_id": 371,
+            "filename": "data/test/1b384ca6c9b5950f.jpg",
+            "objects": [
+                {
+                    "class_id": 0,
+                    "name": "Bird",
+                    "relative_coordinates": {
+                        "center_x": 0.571190,
+                        "center_y": 0.561612,
+                        "width": 0.537414,
+                        "height": 0.522430
+                    },
+                    "confidence": 0.987833
+                }
+            ]
+        },
+        {
+            "frame_id": 683,
+            "filename": "data/test/2b14c9c9fd5b56a7.jpg",
+            "objects": [
+                {
+                    "class_id": 0,
+                    "name": "Bird",
+                    "relative_coordinates": {
+                        "center_x": 0.508574,
+                        "center_y": 0.480064,
+                        "width": 0.773778,
+                        "height": 0.879152
+                    },
+                    "confidence": 0.996662
+                }
+            ]
+        },
+        {
+            "frame_id": 134,
+            "filename": "data/test/2cb51268007c8b8b.jpg",
+            "objects": [
+                {
+                    "class_id": 0,
+                    "name": "Bird",
+                    "relative_coordinates": {
+                        "center_x": 0.243207,
+                        "center_y": 0.601995,
+                        "width": 0.168469,
+                        "height": 0.100657
+                    },
+                    "confidence": 0.904525
+                }
+            ]
+        },
+        {
+            "frame_id": 482,
+            "filename": "data/test/2eacfb993b9055f2.jpg",
+            "objects": [
+                {
+                    "class_id": 1,
+                    "name": "Polar bear",
+                    "relative_coordinates": {
+                        "center_x": 0.452387,
+                        "center_y": 0.447533,
+                        "width": 0.564720,
+                        "height": 0.626755
+                    },
+                    "confidence": 0.993185
+                }
+            ]
+        }
 	]
 }
