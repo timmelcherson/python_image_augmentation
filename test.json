@@ -84,6 +84,112 @@
                     "confidence": 0.993185
                 }
             ]
-        }
+		},
+		{
+			"frame_id": 80,
+			"filename": "data/test/58ecad4f6f583f6c_gr.jpg",
+			"objects": [
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.622534,
+						"center_y": 0.621397,
+						"width": 0.240297,
+						"height": 0.274365
+					},
+					"confidence": 0.991464
+				},
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.581137,
+						"center_y": 0.441991,
+						"width": 0.359646,
+						"height": 0.408886
+					},
+					"confidence": 0.944730
+				},
+				{
+					"class_id": 1,
+					"name": "Polar bear",
+					"relative_coordinates": {
+						"center_x": 0.610690,
+						"center_y": 0.601270,
+						"width": 0.316797,
+						"height": 0.483749
+					},
+					"confidence": 0.300448
+				}
+			]
+		},
+		{
+			"frame_id": 85,
+			"filename": "data/test/200e2fcf824ad5b0_ga_07.jpg",
+			"objects": [
+				{
+					"class_id": 0,
+					"name": "Bird",
+					"relative_coordinates": {
+						"center_x": 0.446603,
+						"center_y": 0.225917,
+						"width": 0.191711,
+						"height": 0.179127
+					},
+					"confidence": 0.958346
+				},
+				{
+					"class_id": 0,
+					"name": "Bird",
+					"relative_coordinates": {
+						"center_x": 0.507287,
+						"center_y": 0.515237,
+						"width": 0.410252,
+						"height": 0.853083
+					},
+					"confidence": 0.899586
+				},
+				{
+					"class_id": 0,
+					"name": "Bird",
+					"relative_coordinates": {
+						"center_x": 0.790155,
+						"center_y": 0.072953,
+						"width": 0.148110,
+						"height": 0.146501
+					},
+					"confidence": 0.857073
+				},
+				{
+					"class_id": 0,
+					"name": "Bird",
+					"relative_coordinates": {
+						"center_x": 0.714356,
+						"center_y": 0.063236,
+						"width": 0.137750,
+						"height": 0.119928
+					},
+					"confidence": 0.298609
+				}
+			]
+		},
+		{
+			"frame_id": 86,
+			"filename": "data/test/8054760dbe65c715_gn_01.jpg",
+			"objects": [
+				{
+					"class_id": 0,
+					"name": "Bird",
+					"relative_coordinates": {
+						"center_x": 0.564174,
+						"center_y": 0.483772,
+						"width": 0.946521,
+						"height": 0.941539
+					},
+					"confidence": 0.896255
+				}
+			]
+		}
 	]
 }
