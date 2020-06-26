@@ -288,46 +288,54 @@ def calculate_all_ssim(original_images_src, augmented_images_src):
     original_file_list = sorted(glob.glob(original_images_src + "*.jpg"))
     augmented_file_list = sorted(glob.glob(augmented_images_src + "*.jpg"))
     
-    # for i in range(20):
-    #     print(original_file_list[i])
-    # print(type(original_file_list))
-
-    # for i in range(20):
-    #     print(sorted(original_file_list)[i])
-    # print(type(sorted(original_file_list)))
-    ssim_dict = {}
-
-    for file_path_1 in original_file_list:
-        
-        augmented_score = {}
-        original_filename = (file_path_1.split('\\')[1]).split('.')[0]
-        original_image = cv2.imread(file_path_1)
-
+    for i in range(5):
+        print(original_file_list[i])
+        original_filename = (original_file_list[i].split('\\')[1]).split('.')[0]
         print(original_filename)
-        for file_path_2 in augmented_file_list:
 
-            augmented_filename = (file_path_2.split('\\')[1]).split('.')[0]
-            
-            if original_filename in augmented_filename:
-                print("TRUE IS IN IT")
-                print(augmented_filename)
-                augmented_image = cv2.imread(file_path_2)
-                
-                print(type(augmented_image))
+        print(sorted(augmented_file_list)[i])
+        aug_filename = (augmented_file_list[i].split('\\')[1]).split('.')[0]
+        print(aug_filename)
 
-                ssim_score = ssim(original_image, augmented_image, multichannel=True)
-                print(ssim_score)
-                augmented_score[augmented_filename] = ssim_score
-                
+        if original_filename in aug_filename:
+            print(original_filename + " IS IN " + aug_filename)
+        else:
+            print(original_filename + " IS NOT IN " + aug_filename)
+    
 
-            else:
-                continue
-            
+    # ssim_dict = {}
 
-        ssim_dict[original_filename] = augmented_score
-        # print(ssim_dict)
+    # for file_path_1 in original_file_list:
         
-    return ssim_dict
+    #     augmented_score = {}
+    #     original_filename = (file_path_1.split('\\')[1]).split('.')[0]
+    #     original_image = cv2.imread(file_path_1)
+
+    #     print(original_filename)
+    #     for file_path_2 in augmented_file_list:
+
+    #         augmented_filename = (file_path_2.split('\\')[1]).split('.')[0]
+            
+    #         if original_filename in augmented_filename:
+    #             print("TRUE IS IN IT")
+    #             print(augmented_filename)
+    #             augmented_image = cv2.imread(file_path_2)
+                
+    #             print(type(augmented_image))
+
+    #             ssim_score = ssim(original_image, augmented_image, multichannel=True)
+    #             print(ssim_score)
+    #             augmented_score[augmented_filename] = ssim_score
+                
+
+    #         else:
+    #             continue
+            
+
+    #     ssim_dict[original_filename] = augmented_score
+    #     # print(ssim_dict)
+        
+    # return ssim_dict
 
 
 def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
@@ -408,8 +416,8 @@ def main():
     testTxt = 'test_files/'
     # original_images = 'images2/'
     # augmented_images = 'images_dst/'
-    original_images = 'C:/Users/A560655/Documents/datasets/augmented_test_images2/'
-    augmented_images = 'C:/Users/A560655/Documents/datasets/bird_polar bear/'
+    augmented_images = 'C:/Users/A560655/Documents/datasets/augmented_test_images2/'
+    original_images = 'C:/Users/A560655/Documents/datasets/bird_polar_bear/'
 
     ssim = calculate_all_ssim(original_images, augmented_images)
 
