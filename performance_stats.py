@@ -8,9 +8,8 @@ import cv2
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from scipy.spatial.distance import cdist
-from timeit import default_timer as timer
 from itertools import chain
-from skimage.metrics import structural_similarity as ssim
+# from skimage.metrics import structural_similarity as ssim
 
 # Read ground truth values from each images respective txt file
 
@@ -283,61 +282,53 @@ def bar_plot_iou_for_number_of_objects(groundTruthDict, totalIoUDict, **kwargs):
 #     return psnr
 
 
-def calculate_all_ssim(original_images_src, augmented_images_src):
+# def calculate_all_ssim(image_src):
 
-    original_file_list = sorted(glob.glob(original_images_src + "*.jpg"))
-    augmented_file_list = sorted(glob.glob(augmented_images_src + "*.jpg"))
+#     file_list = sorted(glob.glob(image_src + "*.jpg"))
+
+#     og_dict = {}
+#     aug_dict = {}
     
-    for i in range(5):
-        print(original_file_list[i])
-        original_filename = (original_file_list[i].split('\\')[1]).split('.')[0]
-        print(original_filename)
+#     for file_path in file_list:
+        
+#         filename = (file_path.split('\\')[1]).split('.')[0]
 
-        print(sorted(augmented_file_list)[i])
-        aug_filename = (augmented_file_list[i].split('\\')[1]).split('.')[0]
-        print(aug_filename)
-
-        if original_filename in aug_filename:
-            print(original_filename + " IS IN " + aug_filename)
-        else:
-            print(original_filename + " IS NOT IN " + aug_filename)
+#         if "_" in filename:
+#             aug_dict[filename] = file_path
+#         else:
+#             og_dict[filename] = file_path
     
+#     print(og_dict)
+#     print(aug_dict)
 
-    # ssim_dict = {}
-
-    # for file_path_1 in original_file_list:
+#     ssim_dict = {}
+    
+    
+#     for i, key in enumerate(og_dict.keys()):
         
-    #     augmented_score = {}
-    #     original_filename = (file_path_1.split('\\')[1]).split('.')[0]
-    #     original_image = cv2.imread(file_path_1)
+#         original_image = cv2.imread(og_dict.get(key))
+#         augmented_score = {}
 
-    #     print(original_filename)
-    #     for file_path_2 in augmented_file_list:
+#         for j, nested_key in enumerate(aug_dict.keys()):
+#             if key in nested_key:
 
-    #         augmented_filename = (file_path_2.split('\\')[1]).split('.')[0]
-            
-    #         if original_filename in augmented_filename:
-    #             print("TRUE IS IN IT")
-    #             print(augmented_filename)
-    #             augmented_image = cv2.imread(file_path_2)
-                
-    #             print(type(augmented_image))
+#                 augmented_image = cv2.imread(aug_dict.get(nested_key))
+#                 augmented_score[nested_key] = ssim(original_image, augmented_image, multichannel=True)
 
-    #             ssim_score = ssim(original_image, augmented_image, multichannel=True)
-    #             print(ssim_score)
-    #             augmented_score[augmented_filename] = ssim_score
-                
+#         ssim_dict[key] = augmented_score
+#         print(str(len(og_dict) - i) + " files left")
 
-    #         else:
-    #             continue
-            
-
-    #     ssim_dict[original_filename] = augmented_score
-    #     # print(ssim_dict)
+#     with open('ssim_result.json', 'w') as fp:
+#         json.dump(ssim_dict, fp,  indent=4)
         
-    # return ssim_dict
+#     return ssim_dict
 
 
+    # for index, item in zip(range(limit), items):
+    #     print(index, item)
+
+    # dict_variable = {key: value for (key, value) in dictonary.items()}
+    # dict1_keys = {k*2:v for (k,v) in dict1.items()}
 def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
 
     # extract dictionary keys
@@ -361,8 +352,8 @@ def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
           list(chain(*[predictionDict[key] for key in keys if '_ga_30' in key])))
     g8 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_gr' in nested_key)),
           list(chain(*[predictionDict[key] for key in keys if '_gr' in key])))
-    g9 = ([1],
-          list(chain(*[predictionDict[key] for key in keys if not '_' in key])))
+    g9 = ([1], list(chain(*[predictionDict[key] for key in keys if not '_' in key])))
+
 
     # Make sure dimensions are symmetrical by multiplying ssim score list with length of precision list
     g1 = (g1[0] * len(g1[1]), g1[1])
@@ -375,6 +366,7 @@ def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
     g8 = (g8[0] * len(g8[1]), g8[1])
     g9 = (g9[0] * len(g9[1]), g9[1])
 
+
     # b: blue
     # g: green
     # r: red
@@ -383,7 +375,7 @@ def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
     # y: yellow
     # k: black
     # w: white
-    
+
 
     data = (g1, g2, g3, g4, g5, g6, g7, g8, g9)
     colors = ("b", "g", "r", "c", "m", "y", "k", "#7777FF", "#99FF33")
@@ -404,6 +396,13 @@ def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
     plt.show()
 
 
+# MORE EXAMPLES OF NICE PLOTS
+# line plot with error bars
+# or scatter plot with error bars
+# box plot for each category 
+
+
+
 def main():
 
     # Ran 2 test batches to get even more spread of results,
@@ -416,10 +415,10 @@ def main():
     testTxt = 'test_files/'
     # original_images = 'images2/'
     # augmented_images = 'images_dst/'
-    augmented_images = 'C:/Users/A560655/Documents/datasets/augmented_test_images2/'
+    image_src = 'C:/Users/A560655/Documents/datasets/augmented_bird_polar_bear/'
     original_images = 'C:/Users/A560655/Documents/datasets/bird_polar_bear/'
 
-    ssim = calculate_all_ssim(original_images, augmented_images)
+    ssim = calculate_all_ssim(image_src)
 
     print(ssim)
     # groundTruthCoordinates1 = read_txt_file_content(txtSrc1)
@@ -431,7 +430,7 @@ def main():
     # testCoordinates = read_json_file_coordinates(testJson)
 
     # test_predicted_confidence_scores = read_json_file_confidence(testJson)
-    predicted_confidence_scores_1 = read_json_file_confidence(jsonSrc1)
+    # predicted_confidence_scores_1 = read_json_file_confidence(jsonSrc1)
 
     # all_iou_values1 = calc_all_iou_values(groundTruthCoordinates1, predictedCoordinates1)
     # all_iou_values2 = calc_all_iou_values(
@@ -442,8 +441,8 @@ def main():
     # bar_plot_iou_for_number_of_objects(
     #     groundTruthCoordinates2, all_iou_values2, test_set_nr=2)
 
-    scatter_plot_confidence_over_augmentation_type(
-        ssim, predicted_confidence_scores_1)
+    # scatter_plot_confidence_over_augmentation_type(
+    #     ssim, predicted_confidence_scores_1)
 
     # scatter_plot_confidence_over_augmentation_type(
     #     ssim, test_predicted_confidence_scores)
