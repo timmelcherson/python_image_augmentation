@@ -271,129 +271,101 @@ def bar_plot_iou_for_number_of_objects(groundTruthDict, totalIoUDict, **kwargs):
 
     plt.show()
 
+def iterate_json():
 
-# def PSNR(original, compressed):
-#     mse = np.mean((original - compressed) ** 2)
-#     if(mse == 0):  # MSE is zero means no noise is present in the signal .
-#         # Therefore PSNR have no importance.
-#         return 100
-#     max_pixel = 255.0
-#     psnr = 20 * math.log10(max_pixel / math.sqrt(mse))
-#     return psnr
+    with open('ssim_result.json') as f:
+        data = json.load(f)
 
+    keys = [*data]
 
-# def calculate_all_ssim(image_src):
+    nested_keys = []
+    for index, key in zip(range(10), [*data]):
+        for nested_key in [*data[key]]:
+            print(data[key][nested_key])
 
-#     file_list = sorted(glob.glob(image_src + "*.jpg"))
-
-#     og_dict = {}
-#     aug_dict = {}
-    
-#     for file_path in file_list:
-        
-#         filename = (file_path.split('\\')[1]).split('.')[0]
-
-#         if "_" in filename:
-#             aug_dict[filename] = file_path
-#         else:
-#             og_dict[filename] = file_path
-    
-#     print(og_dict)
-#     print(aug_dict)
-
-#     ssim_dict = {}
-    
-    
-#     for i, key in enumerate(og_dict.keys()):
-        
-#         original_image = cv2.imread(og_dict.get(key))
-#         augmented_score = {}
-
-#         for j, nested_key in enumerate(aug_dict.keys()):
-#             if key in nested_key:
-
-#                 augmented_image = cv2.imread(aug_dict.get(nested_key))
-#                 augmented_score[nested_key] = ssim(original_image, augmented_image, multichannel=True)
-
-#         ssim_dict[key] = augmented_score
-#         print(str(len(og_dict) - i) + " files left")
-
-#     with open('ssim_result.json', 'w') as fp:
-#         json.dump(ssim_dict, fp,  indent=4)
-        
-#     return ssim_dict
+    print(nested_keys)
 
 
-    # for index, item in zip(range(limit), items):
-    #     print(index, item)
+def scatter_plot_confidence_over_augmentation_type(ssim_src, predictionDict):
 
-    # dict_variable = {key: value for (key, value) in dictonary.items()}
-    # dict1_keys = {k*2:v for (k,v) in dict1.items()}
-def scatter_plot_confidence_over_augmentation_type(ssim_dict, predictionDict):
+    with open(ssim_src) as f:
+        data = json.load(f)
+
 
     # extract dictionary keys
     keys = [*predictionDict]
-    ssim_nested_keys = [*ssim_dict]
+    ssim_keys = [*data]
 
-    # define groups
-    g1 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_gn_01' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_gn_01' in key])))
-    g2 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_gn_02' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_gn_02' in key])))
-    g3 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_gn_03' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_gn_03' in key])))
-    g4 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_ga_03' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_ga_03' in key])))
-    g5 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_ga_07' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_ga_07' in key])))
-    g6 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_ga_20' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_ga_20' in key])))
-    g7 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_ga_30' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_ga_30' in key])))
-    g8 = (list(chain(ssim_dict[key][nested_key] for key in ssim_nested_keys for nested_key in ssim_dict[key] if '_gr' in nested_key)),
-          list(chain(*[predictionDict[key] for key in keys if '_gr' in key])))
-    g9 = ([1], list(chain(*[predictionDict[key] for key in keys if not '_' in key])))
+    keys = sorted(keys)
+    ssim_keys = sorted(ssim_keys)
 
-
-    # Make sure dimensions are symmetrical by multiplying ssim score list with length of precision list
-    g1 = (g1[0] * len(g1[1]), g1[1])
-    g2 = (g2[0] * len(g2[1]), g2[1])
-    g3 = (g3[0] * len(g3[1]), g3[1])
-    g4 = (g4[0] * len(g4[1]), g4[1])
-    g5 = (g5[0] * len(g5[1]), g5[1])
-    g6 = (g6[0] * len(g6[1]), g6[1])
-    g7 = (g7[0] * len(g7[1]), g7[1])
-    g8 = (g8[0] * len(g8[1]), g8[1])
-    g9 = (g9[0] * len(g9[1]), g9[1])
+    for i in range(10):
+        print(keys[i])
+        print(ssim_keys[i])
+        print("###########################")
+    # # define groups
+    # g1 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_gn_01' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_gn_01' in key])))
+    # g2 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_gn_02' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_gn_02' in key])))
+    # g3 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_gn_03' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_gn_03' in key])))
+    # g4 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_ga_03' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_ga_03' in key])))
+    # g5 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_ga_07' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_ga_07' in key])))
+    # g6 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_ga_20' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_ga_20' in key])))
+    # g7 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_ga_30' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_ga_30' in key])))
+    # g8 = (list(chain(data[key][nested_key] for key in ssim_keys for nested_key in [*data[key]] if '_gr' in nested_key)),
+    #       list(chain(*[predictionDict[key] for key in keys if '_gr' in key])))
+    # g9 = ([1], list(chain(*[predictionDict[key] for key in keys if not '_' in key])))
 
 
-    # b: blue
-    # g: green
-    # r: red
-    # c: cyan
-    # m: magenta
-    # y: yellow
-    # k: black
-    # w: white
+    # print("LEN x: " + str(len(g1[0])))
+    # print("LEN y: " + str(len(g1[1])))
+    # print(g1[0])
+    # print(g1[1])
+    # # Make sure dimensions are symmetrical by multiplying ssim score list with length of precision list
+    # g1 = (g1[0] * len(g1[1]), g1[1])
+    # g2 = (g2[0] * len(g2[1]), g2[1])
+    # g3 = (g3[0] * len(g3[1]), g3[1])
+    # g4 = (g4[0] * len(g4[1]), g4[1])
+    # g5 = (g5[0] * len(g5[1]), g5[1])
+    # g6 = (g6[0] * len(g6[1]), g6[1])
+    # g7 = (g7[0] * len(g7[1]), g7[1])
+    # g8 = (g8[0] * len(g8[1]), g8[1])
+    # g9 = (g9[0] * len(g9[1]), g9[1])
 
 
-    data = (g1, g2, g3, g4, g5, g6, g7, g8, g9)
-    colors = ("b", "g", "r", "c", "m", "y", "k", "#7777FF", "#99FF33")
-    groups = ("gn_01", "gn_02", "gn_03", "ga_03",
-              "ga_07", "ga_20", "ga_30", "gr", "original")
+    # # b: blue
+    # # g: green
+    # # r: red
+    # # c: cyan
+    # # m: magenta
+    # # y: yellow
+    # # k: black
+    # # w: white
 
-    fig = plt.figure(figsize=(20, 20))
-    ax = fig.add_subplot(1, 1, 1)
 
-    for data, color, group in zip(data, colors, groups):
-        x, y = data
-        ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+    # data = (g1, g2, g3, g4, g5, g6, g7, g8, g9)
+    # colors = ("b", "g", "r", "c", "m", "y", "k", "#7777FF", "#99FF33")
+    # groups = ("gn_01", "gn_02", "gn_03", "ga_03",
+    #           "ga_07", "ga_20", "ga_30", "gr", "original")
 
-    plt.title('Matplot scatter plot')
-    plt.xlabel('SSIM score')
-    plt.ylabel('Prediction precision')
-    # plt.legend(loc=2)
-    plt.show()
+    # fig = plt.figure(figsize=(20, 20))
+    # ax = fig.add_subplot(1, 1, 1)
+
+    # for data, color, group in zip(data, colors, groups):
+    #     x, y = data
+    #     ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
+
+    # plt.title('Matplot scatter plot')
+    # plt.xlabel('SSIM score')
+    # plt.ylabel('Prediction precision')
+    # # plt.legend(loc=2)
+    # plt.show()
 
 
 # MORE EXAMPLES OF NICE PLOTS
@@ -418,9 +390,8 @@ def main():
     image_src = 'C:/Users/A560655/Documents/datasets/augmented_bird_polar_bear/'
     original_images = 'C:/Users/A560655/Documents/datasets/bird_polar_bear/'
 
-    ssim = calculate_all_ssim(image_src)
+    ssim_src = 'ssim_result.json'
 
-    print(ssim)
     # groundTruthCoordinates1 = read_txt_file_content(txtSrc1)
     # groundTruthCoordinates2 = read_txt_file_content(txtSrc2)
     # predictedCoordinates1 = read_json_file_coordinates(jsonSrc1)
@@ -430,7 +401,7 @@ def main():
     # testCoordinates = read_json_file_coordinates(testJson)
 
     # test_predicted_confidence_scores = read_json_file_confidence(testJson)
-    # predicted_confidence_scores_1 = read_json_file_confidence(jsonSrc1)
+    predicted_confidence_scores_1 = read_json_file_confidence(jsonSrc1)
 
     # all_iou_values1 = calc_all_iou_values(groundTruthCoordinates1, predictedCoordinates1)
     # all_iou_values2 = calc_all_iou_values(
@@ -441,8 +412,8 @@ def main():
     # bar_plot_iou_for_number_of_objects(
     #     groundTruthCoordinates2, all_iou_values2, test_set_nr=2)
 
-    # scatter_plot_confidence_over_augmentation_type(
-    #     ssim, predicted_confidence_scores_1)
+    scatter_plot_confidence_over_augmentation_type(
+        ssim_src, predicted_confidence_scores_1)
 
     # scatter_plot_confidence_over_augmentation_type(
     #     ssim, test_predicted_confidence_scores)
