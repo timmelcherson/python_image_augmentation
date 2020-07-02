@@ -500,19 +500,123 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
 
 
 def box_plot_confidence(confidence_src):
-    return 0
+    # extract dictionary keys
+
+    with open(confidence_src) as f:
+        data = json.load(f)
+
+    confidence_keys = sorted([*data])
+
+    g1 = []
+    g2 = []
+    g3 = []
+    g4 = []
+    g5 = []
+    g6 = []
+    g7 = []
+    g8 = []
+    g9 = []
+
+    for key in confidence_keys:
+
+        confidence = data[key]
+
+        # print(*confidence)
+
+        if "_gn_01" in key:
+            for value in confidence:
+                g1.append(value)
+
+        elif "_gn_02" in key:
+            for value in confidence:
+                g2.append(value)
+
+        elif "_gn_03" in key:
+            for value in confidence:
+                g3.append(value)
+
+        elif "_ga_03" in key:
+            for value in confidence:
+                g4.append(value)
+
+        elif "_ga_07" in key:
+            for value in confidence:
+                g5.append(value)
+
+        elif "_ga_20" in key:
+            for value in confidence:
+                g6.append(value)
+
+        elif "_ga_30" in key:
+            for value in confidence:
+                g7.append(value)
+
+        elif "_gr" in key:
+            for value in confidence:
+                g8.append(value)
+
+        else:
+            for value in confidence:
+                g9.append(value)
+
+    
+
+    data = [g1, g2, g3, g4, g5, g6, g7, g8, g9]
+
+    # Colors from http://www.flatuicolorpicker.com
+    # Color and names (in index-order):
+    # Blue: Hummingbird (0), Chambray (1), Shark (2)
+    # Red: Pomegranate (3), Old Brick (4)
+    # Green: Light Green (5), Salem (6)
+    # Grey: Edward (7)
+    # Yellow: Ripe Lemon (8)
+    colors = ("#c5eff7", "#3a539b", "#24252a",
+              "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
+
+    fig = plt.figure(figsize=(14, 14))
+    ax = fig.add_subplot(111)
+
+    ## Custom x-axis labels
+    ax.set_xticklabels(
+        ['gn_01', 'gn_02', 'gn_03', 'ga_03', 'ga_07', 'ga_20', 'ga_30', 'gr', 'original'])
+
+    ## Remove top axes and right axes ticks
+    ax.get_xaxis().tick_bottom()
+    ax.get_yaxis().tick_left()
+
+    ax.set_title('Box Plot')
+
+    bp = ax.boxplot(data, patch_artist=True, whis=[5, 95])
+    # bp = ax.boxplot(data, patch_artist=True)
+    
+    for index, box in enumerate(bp['boxes']):
+        box.set(facecolor=colors[index])
+
+    for index, whisker in enumerate(bp['whiskers']):
+        if index % 2 == 0:
+            whisker.set(color=colors[index - int(index/2)], linewidth=2)
+        else:
+            whisker.set(color=colors[index - int(index/2 + 1)], linewidth=2)
+
+    for index, cap in enumerate(bp['caps']):
+        if index % 2 == 0:
+            cap.set(color=colors[index - int(index/2)], linewidth=2)
+        else:
+            cap.set(color=colors[index - int(index/2 + 1)], linewidth=2)
+
+    for median in bp['medians']:
+        median.set(linewidth=2)
+
+    plt.ylabel('Prediction Confidence')
+    plt.show()
+
+
 
 def box_plot_iou(iou_src):
 
     
     # extract dictionary keys
     iou_keys = sorted([*iou_src])
-
-    # fake up some data
-    spread = np.random.rand(10) * 100
-    center = np.ones(5) * 50
-    flier_high = np.random.rand(10) * 100 + 100
-    flier_low = np.random.rand(10) * -100
 
     g1 = []
     g2 = []
@@ -590,10 +694,6 @@ def box_plot_iou(iou_src):
     for index, box in enumerate(bp['boxes']):
         print(bp)
         box.set(facecolor=colors[index])
-    
-    # print(bp['whiskers'])
-    # print(len(bp['whiskers']))
-
 
     for index, whisker in enumerate(bp['whiskers']):
         if index % 2 == 0:
@@ -606,12 +706,14 @@ def box_plot_iou(iou_src):
             cap.set(color=colors[index - int(index/2)], linewidth=2)
         else:
             cap.set(color=colors[index - int(index/2 + 1)], linewidth=2)
+            
+    for median in bp['medians']:
+        median.set(linewidth=2)
 
     plt.ylabel('Intersection over Union')
     plt.show()
 
 
-    return 0
 # NEXT STEP:
 # scatter plot with ssim vs IoU
 # box plot over confidence and IoU
@@ -643,7 +745,7 @@ def main():
     predictedCoordinates = read_json_file_coordinates(jsonSrc)
 
     # Calculate intersection over union for all images
-    iou_values = calc_all_iou_values(groundTruthCoordinates, predictedCoordinates)
+    # iou_values = calc_all_iou_values(groundTruthCoordinates, predictedCoordinates)
     
     # # Create bar plot for images with a single object vs images with multiple objects and their corresponding 
     # # Intersection over Union scores
@@ -657,7 +759,11 @@ def main():
     # scatter_plot_ssim_vs_iou(ssim_src, iou_values)
     
     # Create a box plot for iou values for each category of augmentation
-    box_plot_iou(iou_values)
+    # box_plot_iou(iou_values)
+
+    # Create a box plot for iou values for each category of augmentation
+    box_plot_confidence(prediction_score_src)
+
 
 if __name__ == "__main__":
     main()
