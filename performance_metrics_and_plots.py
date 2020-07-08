@@ -346,7 +346,7 @@ def box_plot_confidence(confidence_src):
     for median in bp['medians']:
         median.set(linewidth=2)
 
-    plt.ylim(0, 1)
+    plt.ylim(0, 1.05)
     plt.ylabel('Prediction Confidence')
     plt.show()
 
@@ -537,10 +537,10 @@ def main():
     # box_plot_iou(iou_values)
 
     # # Create a box plot for iou values for each category of augmentation
-    # box_plot_confidence(prediction_score_src)
+    box_plot_confidence(prediction_score_src)
 
     # Create a line plot with error bars for ssim vs iou
-    line_plot_with_error_bars_iou_vs_ssim(ssim_src, iou_values)
+    # line_plot_with_error_bars_iou_vs_ssim(ssim_src, iou_values)
 
 
 if __name__ == "__main__":
