@@ -405,97 +405,42 @@ def box_plot_iou(iou_src):
 
 
 # COMMENT THIS
-def line_plot_with_error_bars_ssim_vs_confidence(ssim_src, prediction_src):
-
-    data = utils.extract_ssim_vs_confidence_groups(ssim_src, prediction_src)
-
-    fig = plt.figure()
-
-    x = np.arange(10)
-    y = 3 * np.sin(x / 20 * np.pi)
-    yerr = np.linspace(0.05, 0.2, 10)
-
-    plt.errorbar(x, y + 7, yerr=yerr,
-                 label='Line1')
-    plt.errorbar(x, y + 5, yerr=yerr,
-                 uplims=True,
-                 label='Line2')
-    plt.errorbar(x, y + 3, yerr=yerr,
-                 uplims=True,
-                 lolims=True,
-                 label='Line3')
-
-    upperlimits = [True, False] * 5
-    lowerlimits = [False, True] * 5
-    plt.errorbar(x, y, yerr=yerr,
-                 uplims=upperlimits,
-                 lolims=lowerlimits,
-                 label='Line4')
-
-    plt.legend(loc='upper left')
-
-    plt.title('matplotlib.pyplot.errorbar()\
-    function Example')
-    plt.show()
-
-
-# COMMENT THIS
-def line_plot_with_error_bars_iou_vs_ssim(ssim_src, iou_src):
-
+def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
-    values = data[0:8]        # a list of tuples with lists as [([group 1 x values], [group 1 y values]), etc.]
-    avg_values = data[8:]          # a list of tuples with floats as [(group 1 x_avg. group 1 y_avg), etc.]
+    values = data[0:8]
+    avg_values = [value for value in data[8:]]
 
-    colors = ("#c5eff7", "#3a539b", "#24252a",
-              "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    groups = ("gn_01", "gn_02", "gn_03", "ga_03",
-              "ga_07", "ga_20", "ga_30", "gr", "gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg",
-              "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
+    print(type(avg_values))
+    print(avg_values)
 
-    fig = plt.figure()
+    colors = ("#c5eff7", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
+    groups = ("gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg", "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
 
-    y_err_groups = []
+    fig = plt.figure(figsize=(16, 16))
+    ax = fig.add_subplot(1, 1, 1)
+    
+    group_std = []
 
-    for value, avg_value in zip(values, avg_values):
-        y_err_groups.append(sorted(np.absolute(np.subtract(value[1], 1)), reverse=True))
+    for group in values:
+        group_std.append((np.std(group[0]), np.std(group[1])))
+
+    print(type(group_std))
+    print(group_std)
 
 
 
-    # for data, color, group in zip(data, colors, groups):
-    #     x, y = data
-    #     if "_avg" in group:
-    #         area = 200
-    #     else:
-    #         area = 20
-    #     ax.scatter(x, y, alpha=0.8, c=color,
-    #                edgecolors='none', s=area, label=group)
-    #     ax.plot(x, p(x), color="#e08283", linestyle="-.")
+    for avg_value, st_dev, color, group in zip(avg_values, group_std, colors, groups):
+        ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=st_dev[0], yerr=st_dev[1], fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
+        ax.scatter(x=avg_value[0], y=avg_value[1], s=300, color=color, marker="o", label=group)
 
-    offset = 0
-    for value, err, group, color in zip(values, y_err_groups, groups, colors):
-        plt.stem(range(len(value[1])), err, use_line_collection=True, bottom=offset)
-        # plt.errorbar(range(len(value[1])), np.add(value[1], offset), yerr=err,
-        #              label=group, errorevery=int((len(value[0]))/25), lolims=True, barsabove=False)
-        offset += 5
-
-    plt.legend(loc='upper left')
-
-    plt.title('Stem Plot')
+    
+    plt.legend(bbox_to_anchor=(1.11, 1), markerscale=0.4)
+    plt.title('SSIM vs Intersection with Standard Deviations')
+    plt.xlabel('SSIM from corresponding original image')
+    plt.ylabel('Intersection over Union')
     plt.show()
 
-
-    # upperlimits = [True, False] * 5
-    # lowerlimits = [False, True] * 5
-    # plt.errorbar(x, y, yerr=yerr,
-    #             uplims=upperlimits,
-    #             lolims=lowerlimits,
-    #             label='Line4')
-
-    # plt.legend(loc='upper left')
-
-    # plt.title('Line Plot with Error Bars')
-    # plt.show()
 
 #### MAYBE LOOK INTO COMPARING CLASSES TOO??????????????
 # COMMENT THIS
@@ -540,7 +485,7 @@ def main():
     # box_plot_confidence(prediction_score_src)
 
     # Create a line plot with error bars for ssim vs iou
-    line_plot_with_error_bars_iou_vs_ssim(ssim_src, iou_values)
+    scatter_iou_vs_ssim_with_errors(ssim_src, iou_values)
 
 
 if __name__ == "__main__":
