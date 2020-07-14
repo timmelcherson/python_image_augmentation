@@ -172,7 +172,7 @@ def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
 
 
 # COMMENT THIS
-def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict, **kwargs):
+def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict):
 
     gSet = set(groundTruthDict)
     iouSet = set(totalIoUDict)
@@ -213,12 +213,9 @@ def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict, **kwargs):
     for index, bar in enumerate(bars):
         yval = bar.get_height()
         plt.text(bar.get_x() + 0.2, yval + .005, "n = " + str(y[index]))
-
-    # create axis labels
-    for ar in kwargs:
-        if ar == 'test_set_nr':
-            plt.title("Test Set nr. {}".format(kwargs.get('test_set_nr')))
+            
     # Create names on the x-axis
+    plt.title("Test Set nr. {}".format(kwargs.get('test_set_nr')))
     plt.xticks(y_pos, nr_of_objects_label)
     plt.xlabel('Number of ground truth objects in image')
     plt.ylabel('Average IoU score')
@@ -231,10 +228,11 @@ def scatter_plot_ssim_vs_confidence(ssim_src, prediction_src):
 
     data = utils.extract_ssim_vs_confidence_groups(
         ssim_src, prediction_src)
+
     colors = ("#c5eff7", "#3a539b", "#24252a",
               "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    groups = ("gn_01", "gn_02", "gn_03", "ga_03",
-              "ga_07", "ga_20", "ga_30", "gr")
+    groups = ("GN 0.1", "GN 0.2", "GN 0.3", "GA 0.3",
+              "GA 0.7", "GA 2.0", "Ga 3.0", "GR")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
@@ -248,7 +246,7 @@ def scatter_plot_ssim_vs_confidence(ssim_src, prediction_src):
     plt.title('Matplot scatter plot')
     plt.xlabel('SSIM score')
     plt.ylabel('Prediction precision')
-    plt.legend(loc=3)
+    plt.legend(bbox_to_anchor=(1.12, 1), markerscale=0.4)
     plt.show()
 
 
@@ -257,6 +255,8 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
 
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
+    data = data[0:8] + data[9:18]
+
     print(len(data))
     # values = data[0]
     # data = data[1]
@@ -264,11 +264,14 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
     # print(values)
     # print(data)
 
-    colors = ("#c5eff7", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18", 
-                "#c5eff7", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    groups = ("gn_01", "gn_02", "gn_03", "ga_03",
-              "ga_07", "ga_20", "ga_30", "gr", "gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg",
-              "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
+    colors = ("#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18",
+              "#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
+    # groups = ("gn_01", "gn_02", "gn_03", "ga_03",
+    #           "ga_07", "ga_20", "ga_30", "gr", "gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg",
+    #           "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
+    groups = ("GN 0.1", "GN 0.2", "GN 0.3", "GA 0.3",
+              "GA 0.7", "GA 2.0", "Ga 3.0", "GR", "GN 0.1 avg", "GN 0.2 avg", "GN 0.3 avg", "GA 0.3 avg",
+              "GA 0.7 avg", "GA 2.0 avg", "Ga 3.0 avg", "GR avg")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
@@ -281,19 +284,24 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
 
     for data, color, group in zip(data, colors, groups):
         x, y = data
-        if "_avg" in group:
+        label = ""
+        if "avg" in group:
             area = 200
+            label = None
         else:
             area = 20
+            label = group
         ax.scatter(x, y, alpha=0.8, c=color,
-                   edgecolors='none', s=area, label=group)
+                   edgecolors='none', s=area, label=label)
         ax.plot(x, p(x), color="#e08283", linestyle="-.")
 
     # plt.ylim(0.6, 1)
     plt.title('SSIM vs Intersection over Union with Group Averages')
     plt.xlabel('SSIM from corresponding original image')
     plt.ylabel('Intersection over Union')
-    plt.legend(bbox_to_anchor=(1.1, 1))
+    plt.xlim(0, 1.01)
+    plt.ylim(0.5, 1.05)
+    plt.legend(bbox_to_anchor=(1, 1), markerscale=2)
     plt.show()
 
 
@@ -304,12 +312,12 @@ def box_plot_confidence(confidence_src):
 
     # Colors from http://www.flatuicolorpicker.com
     # Color and names (in index-order):
-    # Blue: Hummingbird (0), Chambray (1), Shark (2)
+    # Blue: Mariner (0), Chambray (1), Shark (2)
     # Red: Pomegranate (3), Old Brick (4)
     # Green: Light Green (5), Salem (6)
     # Grey: Edward (7)
     # Yellow: Ripe Lemon (8)
-    colors = ("#c5eff7", "#3a539b", "#24252a",
+    colors = ("#2c82c9", "#3a539b", "#24252a",
               "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
 
     fig = plt.figure(figsize=(14, 14))
@@ -408,35 +416,68 @@ def box_plot_iou(iou_src):
 def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
-    values = data[0:8]
-    avg_values = [value for value in data[8:]]
-
-    print(type(avg_values))
-    print(avg_values)
+    values = data[0:9]
+    avg_values = [value for value in data[9:]]
+    avg_list = [[], []]
+    for entry in avg_values:
+        avg_list[0].append(entry[0])
+        avg_list[1].append(entry[1])
 
     colors = ("#c5eff7", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    groups = ("gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg", "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
+    groups = ("gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg", "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg", "original_avg")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
     
+    # x = (1, 2, 3, 4)
+    # y = (1, 2, 3, 4)
+    # print(np.array([[0.3]*len(x), [0.17]*len(x)]))
+    # plt.errorbar(x, y, yerr=np.array([[0.3]*len(x), [0.17]*len(x)]), fmt='r^')
+
+    # yerr= [[0.3  0.3  0.3  0.3 ]
+    #       [0.17 0.17 0.17 0.17]]   is the shape of yerr parameter, shape=(2,N)
+    
     group_std = []
+    group_10_90_percentile_x = [[],[]]
+    group_10_90_percentile_y = [[], []]
 
     for group in values:
-        group_std.append((np.std(group[0]), np.std(group[1])))
+        group_std.append((np.std(group[0]), np.std(group[1]))) # Standard deviation of x ([0])and y ([1])
 
-    print(type(group_std))
-    print(group_std)
+        group_10_90_percentile_x[0].append(np.percentile(group[0], 10))
+        group_10_90_percentile_x[1].append(np.percentile(group[0], 90))
+        group_10_90_percentile_y[0].append(np.percentile(group[1], 10))
+        group_10_90_percentile_y[1].append(np.percentile(group[1], 90))
 
+    group_10_90_percentile_x[0] = np.subtract(avg_list[0], group_10_90_percentile_x[0])
+    group_10_90_percentile_x[1] = np.subtract(group_10_90_percentile_x[1], avg_list[0])
+    group_10_90_percentile_y[0] = np.subtract(avg_list[1], group_10_90_percentile_y[0])
+    group_10_90_percentile_y[1] = np.subtract(group_10_90_percentile_y[1], avg_list[1])
+    
+    # aa = np.array([3.581, -0.721, 0.137, 0.645, 0.12,
+    #                0., -3.236, 0.248, -5.687, 0.816])
+    # np.random.rand(aa.size, 3)
 
+    # ax.errorbar(x=avg_list[0], y=avg_list[1], xerr=group_10_90_percentile_x, yerr=group_10_90_percentile_y,
+    #             fmt='o', ecolor=colors, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
+    # ax.scatter(x=avg_list[0], y=avg_list[1], s=300,
+    #            color=colors, marker="o", label=groups)
+
+    # for avg_value, percentile_x_10, percentile_x_90, percentile_y_10, percentile_y_90, color, group in zip(avg_values, group_10_90_percentile_x[0], group_10_90_percentile_x[1], group_10_90_percentile_y[0], group_10_90_percentile_y[1], colors, groups):
+    #     print([percentile_x_10, percentile_x_90])
+    #     print(avg_value[0])
+    #     ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=[[percentile_x_10], [percentile_x_90]], yerr=[[percentile_y_10], [percentile_y_90]],
+    #                 fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
+    #     ax.scatter(x=avg_value[0], y=avg_value[1], s=300, color=color, marker="o", label=group)
 
     for avg_value, st_dev, color, group in zip(avg_values, group_std, colors, groups):
-        ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=st_dev[0], yerr=st_dev[1], fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
-        ax.scatter(x=avg_value[0], y=avg_value[1], s=300, color=color, marker="o", label=group)
-
+        ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=st_dev[0], yerr=st_dev[1],
+                    fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
+        ax.scatter(x=avg_value[0], y=avg_value[1], s=300,
+                   color=color, marker="o", label=group)
     
-    plt.legend(bbox_to_anchor=(1.11, 1), markerscale=0.4)
-    plt.title('SSIM vs Intersection with Standard Deviations')
+    plt.legend(bbox_to_anchor=(1.12, 1), markerscale=0.4)
+    plt.title('SSIM vs Intersection with standard deviation')
     plt.xlabel('SSIM from corresponding original image')
     plt.ylabel('Intersection over Union')
     plt.show()
@@ -470,26 +511,22 @@ def main():
     # # Create bar plot for images with a single object vs images with multiple objects and their corresponding
     # # Intersection over Union scores
     # bar_plot_nr_of_objects_vs_iou(
-    #     groundTruthCoordinates, iou_values, test_set_nr=1)
+    #     groundTruthCoordinates, iou_values)
 
     # # Create scatter plot for ssim vs prediction confidence for test set results
     # scatter_plot_ssim_vs_confidence(ssim_src, prediction_score_src)
 
     # Create a scatter plot for ssim vs intersection over union for test set results
-    # scatter_plot_ssim_vs_iou(ssim_src, iou_values)
+    scatter_plot_ssim_vs_iou(ssim_src, iou_values)
 
     # Create a box plot for iou values for each category of augmentation
     # box_plot_iou(iou_values)
 
     # # Create a box plot for iou values for each category of augmentation
-    box_plot_confidence(prediction_score_src)
+    # box_plot_confidence(prediction_score_src)
 
     # Create a line plot with error bars for ssim vs iou
-<<<<<<< HEAD
-    # line_plot_with_error_bars_iou_vs_ssim(ssim_src, iou_values)
-=======
-    scatter_iou_vs_ssim_with_errors(ssim_src, iou_values)
->>>>>>> 23ed26c882dbcd5bce68b029103a8f8cd04b8ab7
+    # scatter_iou_vs_ssim_with_errors(ssim_src, iou_values)
 
 
 if __name__ == "__main__":

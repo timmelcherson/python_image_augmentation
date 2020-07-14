@@ -21,7 +21,7 @@ def plot_histograms_for_image(img, **kwargs):
     f2_ax1.set_ylabel('image height')
 
     f2_ax2 = fig.add_subplot(spec2[0, 1])
-    f2_ax2.hist(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).ravel(), 256, [0, 256])
+    f2_ax2.hist(img.ravel(), 256, [0, 256])
     f2_ax2.set_xlabel('pixel value')
     f2_ax2.set_ylabel('count')
 
@@ -54,33 +54,64 @@ def plot_rbg_histograms(img, **kwargs):
     #     else:
     #         plt.title('Histogram for color scale picture')
 
-    fig = plt.figure(figsize=(14, 6), constrained_layout=True)
-    spec = gridspec.GridSpec(ncols=2, nrows=1, figure=fig)
+    fig = plt.figure(figsize=(10, 10), constrained_layout=True)
+    spec = gridspec.GridSpec(ncols=2, nrows=3, figure=fig)
     fig_sub1 = fig.add_subplot(spec[0, 0])
     fig_sub2 = fig.add_subplot(spec[0, 1])
+    fig_sub3 = fig.add_subplot(spec[1, 0])
+    fig_sub4 = fig.add_subplot(spec[1, 1])
+    fig_sub5 = fig.add_subplot(spec[2, :])
+    fig_sub1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cmap='gray')
 
-    for ar in kwargs:
+    blue = img[:,:,0]
+    green = img[:,:,1]
+    red = img[:,:,2]
 
-        if ar == 'type':
-            
-            if kwargs.get('type') == 'original':
-                fig_sub1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cmap='gray')
-                fig_sub2.hist(cv2.cvtColor(img, cv2.COLOR_BGR2RGB).ravel(), 256, [0, 256])
-                fig.suptitle(
-                    "Original Data Set Image", fontsize=18)
-     
-            elif kwargs.get('type') == 'grey':
-                fig_sub1.imshow(img, cmap='gray')
-                fig_sub2.hist(img.ravel(), 256, [0, 256])
-                fig.suptitle(
-                    "Grayscale Image", fontsize=18)
-        
-    fig_sub1.set_xlabel('image width')
-    fig_sub1.set_ylabel('image height')
-    fig_sub2.set_xlabel('pixel value')
-    fig_sub2.set_ylabel('count')
-    
+    print(blue.shape)
+
+    colors = ("Blue", "Green", "Red")
+
+    # for blue_value, green_value, red_value in zip(blue, green, red):
+
+    fig_sub2.hist(blue.ravel(), 256, [0, 256], color="b")
+    fig_sub3.hist(green.ravel(), 256, [0, 256], color="g")
+    fig_sub4.hist(red.ravel(), 256, [0, 256], color="r")
+
+    fig_sub5.hist(blue.ravel(), 256, [0, 256], color="b")
+    fig_sub5.hist(green.ravel(), 256, [0, 256], color="g")
+    fig_sub5.hist(red.ravel(), 256, [0, 256], color="r")
+
     plt.show()
+
+
+    # for ar in kwargs:
+
+    #     if ar == 'type':
+            
+    #         if kwargs.get('type') == 'original':
+    #             image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #             print(image.shape)
+    #             for i in range(0, 10):
+    #                 print(image[i])
+
+                # fig_sub1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cmap='gray')
+                # fig_sub2.hist(cv2.cvtColor(img, cv2.COLOR_BGR2RGB).ravel(), 256, [0, 256])
+                # fig.suptitle(
+                #     "Original Data Set Image", fontsize=18)
+     
+    #         elif kwargs.get('type') == 'grey':
+    #             fig_sub1.imshow(img, cmap='gray')
+    #             fig_sub2.hist(img.ravel(), 256, [0, 256])
+    #             fig.suptitle(
+    #                 "Grayscale Image", fontsize=18)
+        
+    # fig_sub1.set_xlabel('image width')
+    # fig_sub1.set_ylabel('image height')
+    # fig_sub2.set_xlabel('pixel value')
+    # fig_sub2.set_ylabel('count')
+    
+    # plt.show()
 
     # fig1 = plt.figure(figsize=(9, 3), constrained_layout=True)
     # spec1 = gridspec.GridSpec(ncols=2, nrows=1, figure=fig1)
@@ -94,10 +125,7 @@ def plot_rbg_histograms(img, **kwargs):
     # fig1_sub2.set_xlabel('pixel value')
     # fig1_sub2.set_ylabel('count')
     
-    
-    
-    
-    plt.show()
+    # plt.show()
 
 
 def main():
@@ -110,11 +138,11 @@ def main():
     gamma_values = [0.3, 0.7, 2.0, 3.0]
     variances = [0.1, 0.2, 0.3]
 
-    # # Plot histogram for any non-augmented image placed in the folder original_images
-    # for index, item in enumerate(os.listdir(original_src)):
-    #     filename = os.path.join(original_src, item)
-    #     img = cv2.imread(filename)
-    #     plot_rbg_histograms(img, type='original')
+    # Plot histogram for any non-augmented image placed in the folder original_images
+    for index, item in enumerate(os.listdir(original_src)):
+        filename = os.path.join(original_src, item)
+        img = cv2.imread(filename)
+        plot_rbg_histograms(img, type='original')
         
 
     # # Plot histogram for any grayscale image placed in the folder grey_images
@@ -123,11 +151,11 @@ def main():
     #     img = cv2.imread(filename)
     #     plot_rbg_histograms(img, type='grey')
 
-    # Plot histogram for any gamma adjusted image placed in the folder gamma_images
-    for index, item in enumerate(os.listdir(gamma_src)):
-        filename = os.path.join(gamma_src, item)
-        img = cv2.imread(filename)
-        plot_histograms_for_image(img, gamma=gamma_values[index])
+    # # Plot histogram for any gamma adjusted image placed in the folder gamma_images
+    # for index, item in enumerate(os.listdir(gamma_src)):
+    #     filename = os.path.join(gamma_src, item)
+    #     img = cv2.imread(filename)
+    #     plot_histograms_for_image(img, gamma=gamma_values[index])
     
     # # Plot histogram for any grayscale image with added noise placed in the folder grey_noise_images
     # for index, item in enumerate(os.listdir(grey_noise_src)):

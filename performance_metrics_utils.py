@@ -65,8 +65,11 @@ def extract_ssim_vs_confidence_groups(ssim_src, prediction_src):
                 elif "_gr" in nested_key:
                     g8[1].append(value)
                     g8[0].append(data[key][nested_key])
+                else:
+                    g9[1].append(value)
+                    g9[0].append(data[key][nested_key])
 
-    data = (g1, g2, g3, g4, g5, g6, g7, g8)
+    data = (g1, g2, g3, g4, g5, g6, g7, g8, g9)
     return data
 
 
@@ -87,10 +90,10 @@ def extract_ssim_vs_iou_groups(ssim_src, iou_src):
     g6 = ([], [])
     g7 = ([], [])
     g8 = ([], [])
+    g9 = ([], [])
 
     for key in ssim_keys:
         for nested_key in [*data[key]]:
-
             if nested_key in iou_keys:
                 iou = iou_src[nested_key]
                 ssim = data[key][nested_key]
@@ -127,6 +130,10 @@ def extract_ssim_vs_iou_groups(ssim_src, iou_src):
                     g8[1].append(iou)
                     g8[0].append(ssim)
 
+        # Lastly, append the IoU for the original images (and an SSIM of 1 since the image is itself, i.e. not augmented)
+        g9[1].append(iou_src[key])
+        g9[0].append(1)
+
     g1_avg = (sum(g1[0])/len(g1[0]), sum(g1[1])/len(g1[1]))
     g2_avg = (sum(g2[0])/len(g2[0]), sum(g2[1])/len(g2[1]))
     g3_avg = (sum(g3[0])/len(g3[0]), sum(g3[1])/len(g3[1]))
@@ -135,8 +142,9 @@ def extract_ssim_vs_iou_groups(ssim_src, iou_src):
     g6_avg = (sum(g6[0])/len(g6[0]), sum(g6[1])/len(g6[1]))
     g7_avg = (sum(g7[0])/len(g7[0]), sum(g7[1])/len(g7[1]))
     g8_avg = (sum(g8[0])/len(g8[0]), sum(g8[1])/len(g8[1]))
+    g9_avg = (sum(g9[0])/len(g9[0]), sum(g9[1])/len(g9[1]))
 
-    data = (g1, g2, g3, g4, g5, g6, g7, g8, g1_avg, g2_avg, g3_avg, g4_avg, g5_avg, g6_avg, g7_avg, g8_avg)
+    data = (g1, g2, g3, g4, g5, g6, g7, g8, g9, g1_avg, g2_avg, g3_avg, g4_avg, g5_avg, g6_avg, g7_avg, g8_avg, g9_avg)
 
     return data
 
