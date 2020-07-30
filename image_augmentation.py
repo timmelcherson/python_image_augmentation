@@ -58,7 +58,14 @@ def convert_to_grayscale_with_noise(src, dst):
             for i in range(len(variances)):
                 variance = variances[i]
                 noise_img = random_noise(im_arr, mode='gaussian', var=variance**2)
+                test_arr = noise_img.flatten()
+                print(noise_img.shape)
                 noise_img = (255*noise_img).astype(np.uint8)
+                print("---------------------------------------------------")
+                print(noise_img)
+                print("###################################################")
+                print("###################################################")
+                print("###################################################")
 
                 var_split = str(round(variance, 1)).split('.')
                 jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
@@ -75,6 +82,8 @@ def convert_to_grayscale_with_noise(src, dst):
 
         else:
             print("Neither .jpg file or .txt file")
+
+        
 
 
 ### ADJUST GAMMA OF IMAGE
@@ -131,13 +140,17 @@ def file_counter():
 
 def main():
     
-    src = r'C:\Users\A560655\Documents\datasets\test_images2'
-    dst = r'C:\Users\A560655\Documents\datasets\augmented_test_images2'
+    script_dir = os.path.dirname(__file__)
+
+    relative_src = './images2/'
+    relative_dst = './images_dst/'
+    src = os.path.join(script_dir, relative_src)
+    dst = os.path.join(script_dir, relative_dst)
     
-    adjust_gamma(src, dst)
-    convert_to_grayscale(src, dst)
+    # adjust_gamma(src, dst)
+    # convert_to_grayscale(src, dst)
     convert_to_grayscale_with_noise(src, dst)
-    copy_original_files(src, dst)
+    # copy_original_files(src, dst)
     
 
 if __name__ == "__main__":

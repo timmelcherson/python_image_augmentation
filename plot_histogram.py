@@ -54,13 +54,12 @@ def plot_rbg_histograms(img, **kwargs):
     #     else:
     #         plt.title('Histogram for color scale picture')
 
-    fig = plt.figure(figsize=(10, 10), constrained_layout=True)
-    spec = gridspec.GridSpec(ncols=2, nrows=3, figure=fig)
+    fig = plt.figure(figsize=(14, 10), constrained_layout=True)
+    spec = gridspec.GridSpec(ncols=2, nrows=2, figure=fig)
     fig_sub1 = fig.add_subplot(spec[0, 0])
     fig_sub2 = fig.add_subplot(spec[0, 1])
     fig_sub3 = fig.add_subplot(spec[1, 0])
     fig_sub4 = fig.add_subplot(spec[1, 1])
-    fig_sub5 = fig.add_subplot(spec[2, :])
     fig_sub1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), cmap='gray')
 
     blue = img[:,:,0]
@@ -77,13 +76,37 @@ def plot_rbg_histograms(img, **kwargs):
     fig_sub3.hist(green.ravel(), 256, [0, 256], color="g")
     fig_sub4.hist(red.ravel(), 256, [0, 256], color="r")
 
-    fig_sub5.hist(blue.ravel(), 256, [0, 256], color="b")
-    fig_sub5.hist(green.ravel(), 256, [0, 256], color="g")
-    fig_sub5.hist(red.ravel(), 256, [0, 256], color="r")
+    fig_sub1.set_title('Original image')
+    fig_sub2.set_xlabel('Image width')
+    fig_sub2.set_ylabel('Image height')
 
+    fig_sub2.set_title('Blue channel')
+    fig_sub2.set_xlabel('Pixel value')
+    fig_sub2.set_ylabel('Amount of pixels')
+
+    fig_sub3.set_title('Green channel')
+    fig_sub3.set_xlabel('Pixel value')
+    fig_sub3.set_ylabel('Amount of pixels')
+
+    fig_sub4.set_title('Red channel')
+    fig_sub4.set_xlabel('Pixel value')
+    fig_sub4.set_ylabel('Amount of pixels')
+
+    fig.suptitle('An Image and its RGB Colour Channels', fontsize=20)
     plt.show()
 
+    fig2 = plt.figure(figsize=(10, 6))
+    fig2_sub = fig2.add_subplot()
 
+    fig2_sub.hist(blue.ravel(), 256, [0, 256], color="b")
+    fig2_sub.hist(green.ravel(), 256, [0, 256], color="g")
+    fig2_sub.hist(red.ravel(), 256, [0, 256], color="r")
+
+    fig2.suptitle('Combined RGB Colour channels', fontsize=20)
+    fig2_sub.set_xlabel('Pixel value')
+    fig2_sub.set_ylabel('Amount of pixels')
+
+    plt.show()
     # for ar in kwargs:
 
     #     if ar == 'type':
@@ -130,10 +153,18 @@ def plot_rbg_histograms(img, **kwargs):
 
 def main():
 
-    original_src = r'C:\Users\A560655\Documents\python\python_image_augmentation\original_images'
-    grey_src = r'C:\Users\A560655\Documents\python\python_image_augmentation\grey_images'
-    gamma_src = r'C:\Users\A560655\Documents\python\python_image_augmentation\gamma_images'
-    grey_noise_src = r'C:\Users\A560655\Documents\python\python_image_augmentation\grey_noise_images'
+    # original_src = r'C:\Users\A560655\Documents\python\python_image_augmentation\original_images'
+    script_dir = os.path.dirname(__file__)
+
+    original_relative_path = './original_images/'
+    grey_relative_path = './grey_images/'
+    gamma_relative_path = './gamma_images/'
+    grey_noise_relative_path = './grey_noise_images/'
+
+    original_src = os.path.join(script_dir, original_relative_path)
+    grey_src = os.path.join(script_dir, grey_relative_path)
+    gamma_src = os.path.join(script_dir, gamma_relative_path)
+    grey_noise_src = os.path.join(script_dir, grey_noise_relative_path)
 
     gamma_values = [0.3, 0.7, 2.0, 3.0]
     variances = [0.1, 0.2, 0.3]
