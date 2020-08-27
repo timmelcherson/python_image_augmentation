@@ -39,10 +39,10 @@ def convert_to_grayscale(src, dst):
 
 
 ### IMAGE CONVERTER TO GRAYSCALE WITH NOISE
-### APPLIES 3 DIFFERENT VARIANCES 
+### APPLIES 3 DIFFERENT standard_devs 
 def convert_to_grayscale_with_noise(src, dst):
     
-    variances = [0.1, 0.2, 0.3]
+    standard_devs = [0.1, 0.2, 0.3]
 
     for item in os.listdir(src):
 
@@ -54,28 +54,26 @@ def convert_to_grayscale_with_noise(src, dst):
             grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
 
             im_arr = np.asarray(grayImage)
-            
-            for i in range(len(variances)):
-                variance = variances[i]
-                noise_img = random_noise(im_arr, mode='gaussian', var=variance**2)
+            for i in range(len(standard_devs)):
+                standard_dev = standard_devs[i]
+                noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
                 test_arr = noise_img.flatten()
-                print(noise_img.shape)
+                print(min(test_arr))
                 noise_img = (255*noise_img).astype(np.uint8)
                 print("---------------------------------------------------")
-                print(noise_img)
                 print("###################################################")
                 print("###################################################")
                 print("###################################################")
 
-                var_split = str(round(variance, 1)).split('.')
+                var_split = str(round(standard_dev, 1)).split('.')
                 jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
                 cv2.imwrite(os.path.join(dst, jpg_filename), noise_img)
                 file_counter()
 
         elif s.endswith(".txt"):
-            for i in range(len(variances)):
-                variance = variances[i]
-                var_split = str(round(variance, 1)).split('.')
+            for i in range(len(standard_devs)):
+                standard_dev = standard_devs[i]
+                var_split = str(round(standard_dev, 1)).split('.')
                 txt_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
                 shutil.copy(s, os.path.join(dst, txt_filename))
                 file_counter()
