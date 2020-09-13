@@ -213,7 +213,7 @@ def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict):
     for index, bar in enumerate(bars):
         yval = bar.get_height()
         plt.text(bar.get_x() + 0.2, yval + .005, "n = " + str(y[index]))
-            
+
     # Create names on the x-axis
     plt.title("Test Set nr. {}".format(kwargs.get('test_set_nr')))
     plt.xticks(y_pos, nr_of_objects_label)
@@ -255,26 +255,16 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
 
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
-    data = data[0:8] + data[9:18]
+    colors = ("#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7",
+              "#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7")
 
-    print(len(data))
-    # values = data[0]
-    # data = data[1]
-
-    # print(values)
-    # print(data)
-
-    colors = ("#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18",
-              "#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    # groups = ("gn_01", "gn_02", "gn_03", "ga_03",
-    #           "ga_07", "ga_20", "ga_30", "gr", "gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg",
-    #           "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg")
     groups = ("GN 0.1", "GN 0.2", "GN 0.3", "GA 0.3",
-              "GA 0.7", "GA 2.0", "Ga 3.0", "GR", "GN 0.1 avg", "GN 0.2 avg", "GN 0.3 avg", "GA 0.3 avg",
-              "GA 0.7 avg", "GA 2.0 avg", "Ga 3.0 avg", "GR avg")
+              "GA 0.7", "GA 2.0", "GA 3.0", "GR", "GN 0.1 avg", "GN 0.2 avg", "GN 0.3 avg", "GA 0.3 avg",
+              "GA 0.7 avg", "GA 2.0 avg", "GA 3.0 avg", "GR avg")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
+
     z = np.polyfit([data[8][0], data[9][0], data[10][0], data[11][0],
                     data[12][0], data[13][0], data[14][0], data[15][0]],
                    [data[8][1], data[9][1], data[10][1], data[11][1],
@@ -283,7 +273,7 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
     p = np.poly1d(z)
 
     for data, color, group in zip(data, colors, groups):
-        x, y = data
+        x, y = data  # variable data is a tuple of ([x vals], [y vals])
         label = ""
         if "avg" in group:
             area = 200
@@ -423,12 +413,14 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
         avg_list[0].append(entry[0])
         avg_list[1].append(entry[1])
 
-    colors = ("#c5eff7", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
-    groups = ("gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg", "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg", "original_avg")
+    colors = ("#c5eff7", "#3a539b", "#24252a", "#f03434",
+              "#96281b", "#7befb2", "#1e824c", "#abb7b7", "#f7ca18")
+    groups = ("gn_01_avg", "gn_02_avg", "gn_03_avg", "ga_03_avg",
+              "ga_07_avg", "ga_20_avg", "ga_30_avg", "gr_avg", "original_avg")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
-    
+
     # x = (1, 2, 3, 4)
     # y = (1, 2, 3, 4)
     # print(np.array([[0.3]*len(x), [0.17]*len(x)]))
@@ -436,24 +428,29 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
 
     # yerr= [[0.3  0.3  0.3  0.3 ]
     #       [0.17 0.17 0.17 0.17]]   is the shape of yerr parameter, shape=(2,N)
-    
+
     group_std = []
-    group_10_90_percentile_x = [[],[]]
+    group_10_90_percentile_x = [[], []]
     group_10_90_percentile_y = [[], []]
 
     for group in values:
-        group_std.append((np.std(group[0]), np.std(group[1]))) # Standard deviation of x ([0])and y ([1])
+        # Standard deviation of x ([0])and y ([1])
+        group_std.append((np.std(group[0]), np.std(group[1])))
 
         group_10_90_percentile_x[0].append(np.percentile(group[0], 10))
         group_10_90_percentile_x[1].append(np.percentile(group[0], 90))
         group_10_90_percentile_y[0].append(np.percentile(group[1], 10))
         group_10_90_percentile_y[1].append(np.percentile(group[1], 90))
 
-    group_10_90_percentile_x[0] = np.subtract(avg_list[0], group_10_90_percentile_x[0])
-    group_10_90_percentile_x[1] = np.subtract(group_10_90_percentile_x[1], avg_list[0])
-    group_10_90_percentile_y[0] = np.subtract(avg_list[1], group_10_90_percentile_y[0])
-    group_10_90_percentile_y[1] = np.subtract(group_10_90_percentile_y[1], avg_list[1])
-    
+    group_10_90_percentile_x[0] = np.subtract(
+        avg_list[0], group_10_90_percentile_x[0])
+    group_10_90_percentile_x[1] = np.subtract(
+        group_10_90_percentile_x[1], avg_list[0])
+    group_10_90_percentile_y[0] = np.subtract(
+        avg_list[1], group_10_90_percentile_y[0])
+    group_10_90_percentile_y[1] = np.subtract(
+        group_10_90_percentile_y[1], avg_list[1])
+
     # aa = np.array([3.581, -0.721, 0.137, 0.645, 0.12,
     #                0., -3.236, 0.248, -5.687, 0.816])
     # np.random.rand(aa.size, 3)
@@ -475,7 +472,7 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
                     fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
         ax.scatter(x=avg_value[0], y=avg_value[1], s=300,
                    color=color, marker="o", label=group)
-    
+
     plt.legend(bbox_to_anchor=(1.12, 1), markerscale=0.4)
     plt.title('SSIM vs Intersection with standard deviation')
     plt.xlabel('SSIM from corresponding original image')
@@ -483,7 +480,125 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     plt.show()
 
 
-#### MAYBE LOOK INTO COMPARING CLASSES TOO??????????????
+def calculate_percentiles_iou(iou_values):
+
+    gn_01 = [iou_values[key] for key in iou_values.keys() if '_gn_01' in key]
+    gn_02 = [iou_values[key] for key in iou_values.keys() if '_gn_02' in key]
+    gn_03 = [iou_values[key] for key in iou_values.keys() if '_gn_03' in key]
+    ga_03 = [iou_values[key] for key in iou_values.keys() if '_ga_03' in key]
+    ga_07 = [iou_values[key] for key in iou_values.keys() if '_ga_07' in key]
+    ga_20 = [iou_values[key] for key in iou_values.keys() if '_ga_20' in key]
+    ga_30 = [iou_values[key] for key in iou_values.keys() if '_ga_30' in key]
+    gr = [iou_values[key] for key in iou_values.keys() if '_gr' in key]
+
+    data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
+    quantiles = [0.9, 0.75, 0.5, 0.25, 0.1]
+    all_quantiles = []
+    for quantile in quantiles:
+        temp = []
+        for group in data:
+            temp.append(str(round(np.quantile(group, quantile), 4)))
+
+        all_quantiles.append(temp)
+
+    all_quantiles = np.array(all_quantiles)
+
+    columns = ('gn_01', 'gn_02', 'gn_03', 'ga_03',
+               'ga_07', 'ga_20', 'ga_30', 'gr')
+    rows_quantiles = (r'$q_{0.90}$', r'$q_{0.75}$',
+                      r'$q_{0.50}$', r'$q_{0.25}$', r'$q_{0.10}$')
+
+    rows_metrics = ("Mean", "Variance", "STD")
+
+    mean = []
+    variance = []
+    std = []
+
+    for group in data:
+        mean.append(str(round(np.mean(group), 4)))
+        variance.append(str(round(np.var(group), 4)))
+        std.append(str(round(np.std(group), 4)))
+
+    metrics = [mean, variance, std]
+
+    # Plot table for quantiles
+    fig = plt.figure(figsize=(10, 4))
+    ax = fig.add_subplot(1, 1, 1)
+
+    cellColors = [["w"]*len(columns) for _ in range(len(rows_quantiles))]
+    row_max_indices = [np.argmax(row) for row in all_quantiles]
+    row_min_indices = [np.argmin(row) for row in all_quantiles]
+
+    for min_index, max_index, i in zip(row_min_indices, row_max_indices, range(len(rows_quantiles))):
+        cellColors[i][min_index] = (1, 0, 0, 0.3)
+        cellColors[i][max_index] = (0, 1, 0, 0.3)
+
+    row_colours = [(0.3, 0.6, 1, 0.1)]*len(rows_quantiles)
+    col_colours = [(0.3, 0.6, 1, 0.1)]*len(columns)
+
+    table = ax.table(cellText=all_quantiles,
+                     cellColours=cellColors,
+                     cellLoc='center',
+                     rowLabels=rows_quantiles,
+                     rowColours=row_colours,
+                     colLabels=columns,
+                     colColours=col_colours,
+                     loc="upper center")
+
+    table.set_fontsize(14)
+    table.scale(1, 3)
+    ax.axis('off')
+    plt.show()
+
+    # Plot table for metrics
+    fig_metrics = plt.figure(figsize=(10, 3))
+    ax_metrics = fig_metrics.add_subplot(1, 1, 1)
+
+    cellColors = [["w"]*len(columns) for _ in range(len(rows_metrics))]
+    row_max_indices = [np.argmax(row) for row in all_quantiles]
+    row_min_indices = [np.argmin(row) for row in all_quantiles]
+
+    for min_index, max_index, i in zip(row_min_indices, row_max_indices, range(len(rows_metrics))):
+        if i == 0:
+            cellColors[i][min_index] = (1, 0, 0, 0.3)
+            cellColors[i][max_index] = (0, 1, 0, 0.3)
+        else:
+            cellColors[i][max_index] = (1, 0, 0, 0.3)
+            cellColors[i][min_index] = (0, 1, 0, 0.3)
+
+    row_colours = [(0.3, 0.6, 1, 0.1)]*len(rows_quantiles)
+    col_colours = [(0.3, 0.6, 1, 0.1)]*len(columns)
+
+    table_metrics = ax_metrics.table(cellText=metrics,
+                                     cellColours=cellColors,
+                                     cellLoc='center',
+                                     rowLabels=rows_metrics,
+                                     rowColours=row_colours,
+                                     colLabels=columns,
+                                     colColours=col_colours,
+                                     loc="upper center")
+
+    table_metrics.set_fontsize(14)
+    table_metrics.scale(1, 3)
+    ax_metrics.axis('off')
+    plt.show()
+
+
+def calculate_metrics_iou(iou_values):
+
+    gn_01 = [iou_values[key] for key in iou_values.keys() if '_gn_01' in key]
+    gn_02 = [iou_values[key] for key in iou_values.keys() if '_gn_02' in key]
+    gn_03 = [iou_values[key] for key in iou_values.keys() if '_gn_03' in key]
+    ga_03 = [iou_values[key] for key in iou_values.keys() if '_ga_03' in key]
+    ga_07 = [iou_values[key] for key in iou_values.keys() if '_ga_07' in key]
+    ga_20 = [iou_values[key] for key in iou_values.keys() if '_ga_20' in key]
+    ga_30 = [iou_values[key] for key in iou_values.keys() if '_ga_30' in key]
+    gr = [iou_values[key] for key in iou_values.keys() if '_gr' in key]
+
+    data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
+
+
+# MAYBE LOOK INTO COMPARING CLASSES TOO??????????????
 # COMMENT THIS
 def main():
 
@@ -494,6 +609,18 @@ def main():
     jsonSrc = 'result_from_test_set_3.json'    # Results from test set 3
     image_src = 'C:/Users/A560655/Documents/datasets/augmented_bird_polar_bear/'
     original_images = 'C:/Users/A560655/Documents/datasets/bird_polar_bear/'
+
+    script_dir = os.path.dirname(__file__)
+
+    original_relative_path = './original_images/'
+    grey_relative_path = './grey_images/'
+    gamma_relative_path = './gamma_images/'
+    grey_noise_relative_path = './grey_noise_images/'
+
+    original_src = os.path.join(script_dir, original_relative_path)
+    grey_src = os.path.join(script_dir, grey_relative_path)
+    gamma_src = os.path.join(script_dir, gamma_relative_path)
+    grey_noise_src = os.path.join(script_dir, grey_noise_relative_path)
 
     ssim_src = 'ssim_result_test_set_3.json'
     prediction_score_src = 'simplified_prediction_scores_test_set_3.json'
@@ -516,8 +643,10 @@ def main():
     # # Create scatter plot for ssim vs prediction confidence for test set results
     # scatter_plot_ssim_vs_confidence(ssim_src, prediction_score_src)
 
-    # Create a scatter plot for ssim vs intersection over union for test set results
-    scatter_plot_ssim_vs_iou(ssim_src, iou_values)
+    # # Create a scatter plot for ssim vs intersection over union for test set results
+    # scatter_plot_ssim_vs_iou(ssim_src, iou_values)
+
+    calculate_percentiles_iou(iou_values)
 
     # Create a box plot for iou values for each category of augmentation
     # box_plot_iou(iou_values)

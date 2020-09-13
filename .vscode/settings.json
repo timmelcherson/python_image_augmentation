@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\A560655\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
+    "python.pythonPath": "C:\\Users\\Tim\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "compile-hero.disable-compile-files-on-did-save-code": false
 }
