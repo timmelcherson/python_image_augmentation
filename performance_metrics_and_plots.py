@@ -480,7 +480,7 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     plt.show()
 
 
-def calculate_percentiles_iou(iou_values):
+def calculate_percentiles_and_metrics_iou(iou_values):
 
     gn_01 = [iou_values[key] for key in iou_values.keys() if '_gn_01' in key]
     gn_02 = [iou_values[key] for key in iou_values.keys() if '_gn_02' in key]
@@ -555,8 +555,8 @@ def calculate_percentiles_iou(iou_values):
     ax_metrics = fig_metrics.add_subplot(1, 1, 1)
 
     cellColors = [["w"]*len(columns) for _ in range(len(rows_metrics))]
-    row_max_indices = [np.argmax(row) for row in all_quantiles]
-    row_min_indices = [np.argmin(row) for row in all_quantiles]
+    row_max_indices = [np.argmax(row) for row in metrics]
+    row_min_indices = [np.argmin(row) for row in metrics]
 
     for min_index, max_index, i in zip(row_min_indices, row_max_indices, range(len(rows_metrics))):
         if i == 0:
@@ -584,21 +584,114 @@ def calculate_percentiles_iou(iou_values):
     plt.show()
 
 
-def calculate_metrics_iou(iou_values):
+def calculate_percentiles_and_metrics_prediction_confidence(prediction_values):
+    
+    # returns list of lists in order gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr, original
+    data = utils.extract_confidence_groups(prediction_values)
 
-    gn_01 = [iou_values[key] for key in iou_values.keys() if '_gn_01' in key]
-    gn_02 = [iou_values[key] for key in iou_values.keys() if '_gn_02' in key]
-    gn_03 = [iou_values[key] for key in iou_values.keys() if '_gn_03' in key]
-    ga_03 = [iou_values[key] for key in iou_values.keys() if '_ga_03' in key]
-    ga_07 = [iou_values[key] for key in iou_values.keys() if '_ga_07' in key]
-    ga_20 = [iou_values[key] for key in iou_values.keys() if '_ga_20' in key]
-    ga_30 = [iou_values[key] for key in iou_values.keys() if '_ga_30' in key]
-    gr = [iou_values[key] for key in iou_values.keys() if '_gr' in key]
+    # gn_01 = [prediction_values[key] for key in prediction_values.keys() if '_gn_01' in key]
+    # gn_02 = [prediction_values[key] for key in prediction_values.keys() if '_gn_02' in key]
+    # gn_03 = [prediction_values[key] for key in prediction_values.keys() if '_gn_03' in key]
+    # ga_03 = [prediction_values[key] for key in prediction_values.keys() if '_ga_03' in key]
+    # ga_07 = [prediction_values[key] for key in prediction_values.keys() if '_ga_07' in key]
+    # ga_20 = [prediction_values[key] for key in prediction_values.keys() if '_ga_20' in key]
+    # ga_30 = [prediction_values[key] for key in prediction_values.keys() if '_ga_30' in key]
+    # gr = [prediction_values[key] for key in prediction_values.keys() if '_gr' in key]
 
-    data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
+    # data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
+
+    quantiles = [0.9, 0.75, 0.5, 0.25, 0.1]
+    all_quantiles = []
+    for quantile in quantiles:
+        temp = []
+        for group in data:
+            temp.append(str(round(np.quantile(group, quantile), 4)))
+
+        all_quantiles.append(temp)
+
+    all_quantiles = np.array(all_quantiles)
+
+    columns = ('gn_01', 'gn_02', 'gn_03', 'ga_03',
+               'ga_07', 'ga_20', 'ga_30', 'gr', 'original')
+    rows_quantiles = (r'$q_{0.90}$', r'$q_{0.75}$',
+                      r'$q_{0.50}$', r'$q_{0.25}$', r'$q_{0.10}$')
+
+    rows_metrics = ("Mean", "Variance", "STD")
+
+    mean = []
+    variance = []
+    std = []
+
+    for group in data:
+        mean.append(str(round(np.mean(group), 4)))
+        variance.append(str(round(np.var(group), 4)))
+        std.append(str(round(np.std(group), 4)))
+
+    metrics = [mean, variance, std]
+
+    # Plot table for quantiles
+    fig = plt.figure(figsize=(10, 4))
+    ax = fig.add_subplot(1, 1, 1)
+
+    cellColors = [["w"]*len(columns) for _ in range(len(rows_quantiles))]
+    row_max_indices = [np.argmax(row) for row in all_quantiles]
+    row_min_indices = [np.argmin(row) for row in all_quantiles]
+
+    for min_index, max_index, i in zip(row_min_indices, row_max_indices, range(len(rows_quantiles))):
+        cellColors[i][min_index] = (1, 0, 0, 0.3)
+        cellColors[i][max_index] = (0, 1, 0, 0.3)
+
+    row_colours = [(0.3, 0.6, 1, 0.1)]*len(rows_quantiles)
+    col_colours = [(0.3, 0.6, 1, 0.1)]*len(columns)
+
+    table = ax.table(cellText=all_quantiles,
+                     cellColours=cellColors,
+                     cellLoc='center',
+                     rowLabels=rows_quantiles,
+                     rowColours=row_colours,
+                     colLabels=columns,
+                     colColours=col_colours,
+                     loc="upper center")
+
+    table.set_fontsize(14)
+    table.scale(1, 3)
+    ax.axis('off')
+    plt.show()
+
+    # Plot table for metrics
+    fig_metrics = plt.figure(figsize=(10, 3))
+    ax_metrics = fig_metrics.add_subplot(1, 1, 1)
+
+    cellColors = [["w"]*len(columns) for _ in range(len(rows_metrics))]
+    row_max_indices = [np.argmax(row) for row in metrics]
+    row_min_indices = [np.argmin(row) for row in metrics]
+
+    for min_index, max_index, i in zip(row_min_indices, row_max_indices, range(len(rows_metrics))):
+        if i == 0:
+            cellColors[i][min_index] = (1, 0, 0, 0.3)
+            cellColors[i][max_index] = (0, 1, 0, 0.3)
+        else:
+            cellColors[i][max_index] = (1, 0, 0, 0.3)
+            cellColors[i][min_index] = (0, 1, 0, 0.3)
+
+    row_colours = [(0.3, 0.6, 1, 0.1)]*len(rows_quantiles)
+    col_colours = [(0.3, 0.6, 1, 0.1)]*len(columns)
+
+    table_metrics = ax_metrics.table(cellText=metrics,
+                                     cellColours=cellColors,
+                                     cellLoc='center',
+                                     rowLabels=rows_metrics,
+                                     rowColours=row_colours,
+                                     colLabels=columns,
+                                     colColours=col_colours,
+                                     loc="upper center")
+
+    table_metrics.set_fontsize(14)
+    table_metrics.scale(1, 3)
+    ax_metrics.axis('off')
+    plt.show()
 
 
-# MAYBE LOOK INTO COMPARING CLASSES TOO??????????????
 # COMMENT THIS
 def main():
 
@@ -646,7 +739,11 @@ def main():
     # # Create a scatter plot for ssim vs intersection over union for test set results
     # scatter_plot_ssim_vs_iou(ssim_src, iou_values)
 
-    calculate_percentiles_iou(iou_values)
+    # Calculate quantiles used in box plots and mean, variance and std groupwise for IoU
+    calculate_percentiles_and_metrics_iou(iou_values)
+
+    # # Calculate quantiles used in box plots and mean, variance and std groupwise for prediction confidence
+    # calculate_percentiles_and_metrics_prediction_confidence(prediction_score_src)
 
     # Create a box plot for iou values for each category of augmentation
     # box_plot_iou(iou_values)
