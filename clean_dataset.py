@@ -26,7 +26,10 @@ def file_counter():
 
 
 def main():
-    src = r'C:\Users\A560655\Documents\datasets\augmented_test_images'
+  
+    script_dir = os.path.dirname(__file__)
+    src = os.path.join(script_dir, './augmented_test_images/')
+    
     remove_augmented_files(src)
 
 

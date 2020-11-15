@@ -10,10 +10,8 @@ from scipy.spatial.distance import cdist
 from itertools import chain
 
 import performance_metrics_utils as utils
-# from skimage.metrics import structural_similarity as ssim
 
 
-# Read ground truth values from each images respective txt file
 def read_txt_file_content(src):
 
     coordinates = {}
@@ -48,7 +46,6 @@ def read_txt_file_content(src):
     return coordinates
 
 
-# Read the results from test batch
 def read_json_file_coordinates(src):
 
     coordinates = {}
@@ -78,7 +75,6 @@ def read_json_file_coordinates(src):
     return coordinates
 
 
-# Calculate the IoU for all images
 def calc_all_iou_values(groundTruth, prediction):
 
     setA = set(groundTruth)
@@ -96,7 +92,6 @@ def calc_all_iou_values(groundTruth, prediction):
     return iou_dict
 
 
-# COMMENT THIS
 def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
     # determine the (x, y)-coordinates of the intersection rectangle
     # remember (0, 0) is top left and (1, 1) is bottom right for  our data
@@ -127,8 +122,8 @@ def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
 
         for index, groundTruth in enumerate(groundTruthBoxes):
 
-            # Ground truth area is always calculated in first prediction iteration, so skipping
-            # does not effect any area calculation
+            # Ground truth area is always calculated in first prediction iteration, 
+            # so skipping does not effect any area calculation
             if index in skip_indices:
                 continue
 
@@ -137,8 +132,9 @@ def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
             groundTruthCenter_x = groundTruth[0] + groundTruthWidth / 2
             groundTruthCenter_y = groundTruth[1] + groundTruthHeight / 2
 
-            new_euclidean_distance = np.sqrt(np.square(
-                groundTruthCenter_x - predictionCenter_x) + np.square(groundTruthCenter_y - predictionCenter_y))
+            new_euclidean_distance = np.sqrt(
+              np.square(groundTruthCenter_x - predictionCenter_x) + 
+              np.square(groundTruthCenter_y - predictionCenter_y))
 
             if new_euclidean_distance < previous_distance:
 
@@ -171,7 +167,6 @@ def bb_intersection_over_union(groundTruthBoxes, predictionBoxes):
     return total_iou
 
 
-# COMMENT THIS
 def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict):
 
     gSet = set(groundTruthDict)
@@ -206,10 +201,6 @@ def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict):
     bars = plt.bar(y_pos, avg_ious, width=0.5)
 
     # Create bars
-    # plt.bar(y_pos, avg_ious, width=0.5)
-
-    # for i, v in enumerate(nr_of_objects):
-    #     plt.text(v + 3, i + .25, str(v), color='black', fontweight='bold')
     for index, bar in enumerate(bars):
         yval = bar.get_height()
         plt.text(bar.get_x() + 0.2, yval + .005, "n = " + str(y[index]))
@@ -223,7 +214,6 @@ def bar_plot_nr_of_objects_vs_iou(groundTruthDict, totalIoUDict):
     plt.show()
 
 
-# COMMENT THIS
 def scatter_plot_ssim_vs_confidence(ssim_src, prediction_src):
 
     data = utils.extract_ssim_vs_confidence_groups(
@@ -250,17 +240,18 @@ def scatter_plot_ssim_vs_confidence(ssim_src, prediction_src):
     plt.show()
 
 
-# COMMENT THIS
 def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
 
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
-    colors = ("#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7",
-              "#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2", "#1e824c", "#abb7b7")
+    colors = ("#2c82c9", "#3a539b", "#24252a", "#f03434", "#96281b", "#7befb2",
+              "#1e824c", "#abb7b7", "#2c82c9", "#3a539b", "#24252a", "#f03434", 
+              "#96281b", "#7befb2", "#1e824c", "#abb7b7")
 
     groups = ("GN 0.1", "GN 0.2", "GN 0.3", "GA 0.3",
-              "GA 0.7", "GA 2.0", "GA 3.0", "GR", "GN 0.1 avg", "GN 0.2 avg", "GN 0.3 avg", "GA 0.3 avg",
-              "GA 0.7 avg", "GA 2.0 avg", "GA 3.0 avg", "GR avg")
+              "GA 0.7", "GA 2.0", "GA 3.0", "GR", "GN 0.1 avg", "GN 0.2 avg", 
+              "GN 0.3 avg", "GA 0.3 avg", "GA 0.7 avg", "GA 2.0 avg", 
+              "GA 3.0 avg", "GR avg")
 
     fig = plt.figure(figsize=(16, 16))
     ax = fig.add_subplot(1, 1, 1)
@@ -295,7 +286,6 @@ def scatter_plot_ssim_vs_iou(ssim_src, iou_src):
     plt.show()
 
 
-# COMMENT THIS
 def box_plot_confidence(confidence_src):
 
     data = utils.extract_confidence_groups(confidence_src)
@@ -315,7 +305,8 @@ def box_plot_confidence(confidence_src):
 
     # Custom x-axis labels
     ax.set_xticklabels(
-        ['gn_01', 'gn_02', 'gn_03', 'ga_03', 'ga_07', 'ga_20', 'ga_30', 'gr', 'original'])
+        ['gn_01', 'gn_02', 'gn_03', 'ga_03', 'ga_07', 'ga_20', 'ga_30', 'gr',
+        'original'])
 
     # Remove top axes and right axes ticks
     ax.get_xaxis().tick_bottom()
@@ -324,7 +315,6 @@ def box_plot_confidence(confidence_src):
     ax.set_title('Box Plot')
 
     bp = ax.boxplot(data, patch_artist=True, whis=[10, 90])
-    # bp = ax.boxplot(data, patch_artist=True)
 
     for index, box in enumerate(bp['boxes']):
         box.set(facecolor=colors[index])
@@ -349,7 +339,6 @@ def box_plot_confidence(confidence_src):
     plt.show()
 
 
-# COMMENT THIS
 def box_plot_iou(iou_src):
 
     fig = plt.figure(figsize=(14, 14))
@@ -369,7 +358,8 @@ def box_plot_iou(iou_src):
 
     # Custom x-axis labels
     ax.set_xticklabels(
-        ['gn_01', 'gn_02', 'gn_03', 'ga_03', 'ga_07', 'ga_20', 'ga_30', 'gr', 'original'])
+        ['gn_01', 'gn_02', 'gn_03', 'ga_03', 'ga_07', 'ga_20', 'ga_30', 'gr',
+        'original'])
 
     # Remove top axes and right axes ticks
     ax.get_xaxis().tick_bottom()
@@ -378,7 +368,6 @@ def box_plot_iou(iou_src):
     ax.set_title('Box Plot')
 
     bp = ax.boxplot(data, patch_artist=True, whis=[10, 90])
-    # bp = ax.boxplot(data, patch_artist=True)
 
     for index, box in enumerate(bp['boxes']):
         box.set(facecolor=colors[index])
@@ -402,7 +391,6 @@ def box_plot_iou(iou_src):
     plt.show()
 
 
-# COMMENT THIS
 def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     data = utils.extract_ssim_vs_iou_groups(ssim_src, iou_src)
 
@@ -451,21 +439,6 @@ def scatter_iou_vs_ssim_with_errors(ssim_src, iou_src):
     group_10_90_percentile_y[1] = np.subtract(
         group_10_90_percentile_y[1], avg_list[1])
 
-    # aa = np.array([3.581, -0.721, 0.137, 0.645, 0.12,
-    #                0., -3.236, 0.248, -5.687, 0.816])
-    # np.random.rand(aa.size, 3)
-
-    # ax.errorbar(x=avg_list[0], y=avg_list[1], xerr=group_10_90_percentile_x, yerr=group_10_90_percentile_y,
-    #             fmt='o', ecolor=colors, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
-    # ax.scatter(x=avg_list[0], y=avg_list[1], s=300,
-    #            color=colors, marker="o", label=groups)
-
-    # for avg_value, percentile_x_10, percentile_x_90, percentile_y_10, percentile_y_90, color, group in zip(avg_values, group_10_90_percentile_x[0], group_10_90_percentile_x[1], group_10_90_percentile_y[0], group_10_90_percentile_y[1], colors, groups):
-    #     print([percentile_x_10, percentile_x_90])
-    #     print(avg_value[0])
-    #     ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=[[percentile_x_10], [percentile_x_90]], yerr=[[percentile_y_10], [percentile_y_90]],
-    #                 fmt='o', ecolor=color, capsize=8.0, capthick=2.0, elinewidth=2.0, marker="None")
-    #     ax.scatter(x=avg_value[0], y=avg_value[1], s=300, color=color, marker="o", label=group)
 
     for avg_value, st_dev, color, group in zip(avg_values, group_std, colors, groups):
         ax.errorbar(x=avg_value[0], y=avg_value[1], xerr=st_dev[0], yerr=st_dev[1],
@@ -490,8 +463,9 @@ def calculate_percentiles_and_metrics_iou(iou_values):
     ga_20 = [iou_values[key] for key in iou_values.keys() if '_ga_20' in key]
     ga_30 = [iou_values[key] for key in iou_values.keys() if '_ga_30' in key]
     gr = [iou_values[key] for key in iou_values.keys() if '_gr' in key]
+    original = [iou_values[key] for key in iou_values.keys() if '_' not in key]
 
-    data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
+    data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr, original)
     quantiles = [0.9, 0.75, 0.5, 0.25, 0.1]
     all_quantiles = []
     for quantile in quantiles:
@@ -504,7 +478,7 @@ def calculate_percentiles_and_metrics_iou(iou_values):
     all_quantiles = np.array(all_quantiles)
 
     columns = ('gn_01', 'gn_02', 'gn_03', 'ga_03',
-               'ga_07', 'ga_20', 'ga_30', 'gr')
+               'ga_07', 'ga_20', 'ga_30', 'gr', 'original')
     rows_quantiles = (r'$q_{0.90}$', r'$q_{0.75}$',
                       r'$q_{0.50}$', r'$q_{0.25}$', r'$q_{0.10}$')
 
@@ -584,21 +558,11 @@ def calculate_percentiles_and_metrics_iou(iou_values):
     plt.show()
 
 
-def calculate_percentiles_and_metrics_prediction_confidence(prediction_values):
+def calculate_percentiles_and_metrics_pr(prediction_values):
     
-    # returns list of lists in order gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr, original
+    # returns list of lists in order gn_01, gn_02, gn_03,
+    # ga_03, ga_07, ga_20, ga_30, gr, original
     data = utils.extract_confidence_groups(prediction_values)
-
-    # gn_01 = [prediction_values[key] for key in prediction_values.keys() if '_gn_01' in key]
-    # gn_02 = [prediction_values[key] for key in prediction_values.keys() if '_gn_02' in key]
-    # gn_03 = [prediction_values[key] for key in prediction_values.keys() if '_gn_03' in key]
-    # ga_03 = [prediction_values[key] for key in prediction_values.keys() if '_ga_03' in key]
-    # ga_07 = [prediction_values[key] for key in prediction_values.keys() if '_ga_07' in key]
-    # ga_20 = [prediction_values[key] for key in prediction_values.keys() if '_ga_20' in key]
-    # ga_30 = [prediction_values[key] for key in prediction_values.keys() if '_ga_30' in key]
-    # gr = [prediction_values[key] for key in prediction_values.keys() if '_gr' in key]
-
-    # data = (gn_01, gn_02, gn_03, ga_03, ga_07, ga_20, ga_30, gr)
 
     quantiles = [0.9, 0.75, 0.5, 0.25, 0.1]
     all_quantiles = []
@@ -692,16 +656,10 @@ def calculate_percentiles_and_metrics_prediction_confidence(prediction_values):
     plt.show()
 
 
-# COMMENT THIS
 def main():
 
-    # Ran 2 test batches to get even more spread of results,
-    # since test set 2 was used for mAP during training
-
-    txtSrc = 'augmented_test_set_3_txtfiles/'
-    jsonSrc = 'result_from_test_set_3.json'    # Results from test set 3
-    image_src = 'C:/Users/A560655/Documents/datasets/augmented_bird_polar_bear/'
-    original_images = 'C:/Users/A560655/Documents/datasets/bird_polar_bear/'
+    text_src = 'augmented_test_set_3_txtfiles/'
+    json_src = 'result_from_test_set_3.json'    # Results from test set 3
 
     script_dir = os.path.dirname(__file__)
 
@@ -719,40 +677,44 @@ def main():
     prediction_score_src = 'simplified_prediction_scores_test_set_3.json'
 
     # Read ground truth bounding box coordinates from given txt file
-    groundTruthCoordinates = read_txt_file_content(txtSrc)
+    groundTruthCoordinates = read_txt_file_content(text_src)
 
     # Read coordinates for predicted bounding boxes from acquired json file
-    predictedCoordinates = read_json_file_coordinates(jsonSrc)
+    predictedCoordinates = read_json_file_coordinates(json_src)
 
     # Calculate intersection over union for all images
     iou_values = calc_all_iou_values(
         groundTruthCoordinates, predictedCoordinates)
 
-    # # Create bar plot for images with a single object vs images with multiple objects and their corresponding
-    # # Intersection over Union scores
-    # bar_plot_nr_of_objects_vs_iou(
-    #     groundTruthCoordinates, iou_values)
+    # Create bar plot for images with a single object vs images with multiple 
+    # objects and their corresponding Intersection over Union scores
+    bar_plot_nr_of_objects_vs_iou(
+        groundTruthCoordinates, iou_values)
 
-    # # Create scatter plot for ssim vs prediction confidence for test set results
-    # scatter_plot_ssim_vs_confidence(ssim_src, prediction_score_src)
+    # Create scatter plot for ssim vs prediction confidence for test set results
+    scatter_plot_ssim_vs_confidence(ssim_src, prediction_score_src)
 
-    # # Create a scatter plot for ssim vs intersection over union for test set results
-    # scatter_plot_ssim_vs_iou(ssim_src, iou_values)
+    # Create a scatter plot for ssim vs intersection over union for 
+    # test set results
+    scatter_plot_ssim_vs_iou(ssim_src, iou_values)
 
-    # Calculate quantiles used in box plots and mean, variance and std groupwise for IoU
+    # Calculate quantiles used in box plots and mean, variance and std groupwise 
+    # for IoU
     calculate_percentiles_and_metrics_iou(iou_values)
 
-    # # Calculate quantiles used in box plots and mean, variance and std groupwise for prediction confidence
-    # calculate_percentiles_and_metrics_prediction_confidence(prediction_score_src)
+    # Calculate quantiles used in box plots and mean, variance and std groupwise 
+    # for prediction confidence
+    calculate_percentiles_and_metrics_pr(
+      prediction_score_src)
 
     # Create a box plot for iou values for each category of augmentation
-    # box_plot_iou(iou_values)
+    box_plot_iou(iou_values)
 
-    # # Create a box plot for iou values for each category of augmentation
-    # box_plot_confidence(prediction_score_src)
+    # Create a box plot for iou values for each category of augmentation
+    box_plot_confidence(prediction_score_src)
 
     # Create a line plot with error bars for ssim vs iou
-    # scatter_iou_vs_ssim_with_errors(ssim_src, iou_values)
+    scatter_iou_vs_ssim_with_errors(ssim_src, iou_values)
 
 
 if __name__ == "__main__":

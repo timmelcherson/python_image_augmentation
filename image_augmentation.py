@@ -11,10 +11,10 @@ from skimage.util import random_noise
 from itertools import count
 
 
+# Image converter progression counter
 GLOBAL_COUNTER = count()
-# TOTAL_AMOUNT_OF_FILES = 1980 + 1980*1 + 1980*3 + 1980*4
 
-### IMAGE CONVERTER TO GRAYSCALE
+### Converts images to grayscale
 def convert_to_grayscale(src, dst):
 
     for item in os.listdir(src):
@@ -38,8 +38,7 @@ def convert_to_grayscale(src, dst):
             print("Neither .jpg file or .txt file")
 
 
-### IMAGE CONVERTER TO GRAYSCALE WITH NOISE
-### APPLIES 3 DIFFERENT standard_devs 
+### Converts images to grayscale and applies random noise
 def convert_to_grayscale_with_noise(src, dst):
     
     standard_devs = [0.1, 0.2, 0.3]
@@ -58,12 +57,7 @@ def convert_to_grayscale_with_noise(src, dst):
                 standard_dev = standard_devs[i]
                 noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
                 test_arr = noise_img.flatten()
-                print(min(test_arr))
                 noise_img = (255*noise_img).astype(np.uint8)
-                print("---------------------------------------------------")
-                print("###################################################")
-                print("###################################################")
-                print("###################################################")
 
                 var_split = str(round(standard_dev, 1)).split('.')
                 jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
@@ -84,8 +78,7 @@ def convert_to_grayscale_with_noise(src, dst):
         
 
 
-### ADJUST GAMMA OF IMAGE
-### APPLIES 4 DIFFERENT VALUES OF GAMMA
+### Adjust gamma values of images
 def adjust_gamma(src, dst):
     
     gamma_values = [0.3, 0.7, 2.0, 3.0]
@@ -145,10 +138,10 @@ def main():
     src = os.path.join(script_dir, relative_src)
     dst = os.path.join(script_dir, relative_dst)
     
-    # adjust_gamma(src, dst)
-    # convert_to_grayscale(src, dst)
+    adjust_gamma(src, dst)
+    convert_to_grayscale(src, dst)
     convert_to_grayscale_with_noise(src, dst)
-    # copy_original_files(src, dst)
+    copy_original_files(src, dst)
     
 
 if __name__ == "__main__":

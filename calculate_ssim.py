@@ -48,7 +48,8 @@ def calculate_all_ssim(image_src):
 
 def main():
 
-    image_src = 'C:/Users/A560655/Documents/datasets/augmented_test_images3/'
+    script_dir = os.path.dirname(__file__)
+    image_src = os.path.join(script_dir, './augmented_test_images3/')
 
     ssim = calculate_all_ssim(image_src)
 

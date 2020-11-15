@@ -28,6 +28,8 @@ def simplify_confidence(src):
     return confidence_values
 
 
+# Script to extract only the prediction score averaged over all detections
+# in an image
 def main():
 
     json_src = 'result_from_test_set_3.json'
