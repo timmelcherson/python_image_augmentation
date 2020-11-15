@@ -118,7 +118,7 @@ def adjust_gamma(src, dst):
             print("Neither .jpg file or .txt file")
 
 
-### FUNCTION FOR SIMPLE COPYING OF FILES TO NEW DESTINATION
+### Copy files without augmentation
 def copy_original_files(src, dst):
     for item in os.listdir(src):
         s = os.path.join(src, item)
@@ -129,19 +129,32 @@ def file_counter():
     print("{} files completed.".format(next(GLOBAL_COUNTER)))
     
 
+### Image augmentation script
+### The augmented images are currently saved in separate folders
+### To save all augmented images from a data set to a specifing
+### training or test set, change the relative sources correspondingly
 def main():
     
     script_dir = os.path.dirname(__file__)
 
-    relative_src = './images2/'
-    relative_dst = './images_dst/'
+    # data_src = './any_data_set_source_folder/'
+    # data_dst = './any_data_destination_folder/'
+    relative_src = './original_images/' # Or training/test set folders
+    relative_grayscale_dst = './images_dst/' # Or training/test set folders
+    relative_grayscale_noise_dst = './images_dst/' # Or training/test set folders
+    relative_gamma_dst = './images_dst/' # Or training/test set folders
+
     src = os.path.join(script_dir, relative_src)
-    dst = os.path.join(script_dir, relative_dst)
+    grayscale_dst = os.path.join(script_dir, relative_grayscale_dst)
+    grayscale_noise_dst = os.path.join(script_dir, relative_grayscale_noise_dst)
+    gamma_dst = os.path.join(script_dir, relative_gamma_dst)
     
-    adjust_gamma(src, dst)
-    convert_to_grayscale(src, dst)
-    convert_to_grayscale_with_noise(src, dst)
-    copy_original_files(src, dst)
+    convert_to_grayscale(src, grayscale_dst)
+    convert_to_grayscale_with_noise(src, grayscale_noise_dst)
+    adjust_gamma(src, gamma_dst)
+
+    # Uncomment to copy original files to eventual training / test set folder
+    # copy_original_files(data_src, dst)
     
 
 if __name__ == "__main__":

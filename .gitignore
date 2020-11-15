@@ -1,0 +1,14 @@
+# Misc/Editor
+vscode/
+__pycache__/
+
+# Image folders
+augmented_test_set_2_txtfiles
+augmented_test_set_3_txtfiles
+gamma_images
+grey_images
+grey_noise_images
+original_images
+training_set
+test_set
+plots
