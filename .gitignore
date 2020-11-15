@@ -1,5 +1,5 @@
 # Misc/Editor
-vscode/
+.vscode/
 __pycache__/
 
 # Image folders
