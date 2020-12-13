@@ -9,6 +9,8 @@ import matplotlib.gridspec as gridspec
 from PIL import Image
 from skimage.util import random_noise
 from itertools import count
+from skimage import img_as_float
+
 
 
 # Image converter progression counter
@@ -48,22 +50,39 @@ def convert_to_grayscale_with_noise(src, dst):
         s = os.path.join(src, item)
         split = item.split('.')
 
+        # Perform image augmentation, copy, move and rename the new image
         if s.endswith(".jpg"): 
             originalImage = cv2.imread(s)
             grayImage = cv2.cvtColor(originalImage, cv2.COLOR_BGR2GRAY)
-
             im_arr = np.asarray(grayImage)
+
             for i in range(len(standard_devs)):
                 standard_dev = standard_devs[i]
-                noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
-                test_arr = noise_img.flatten()
-                noise_img = (255*noise_img).astype(np.uint8)
 
-                var_split = str(round(standard_dev, 1)).split('.')
-                jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
-                cv2.imwrite(os.path.join(dst, jpg_filename), noise_img)
-                file_counter()
+                # Uncomment this section to manually plot the same gaussian distribution
+                # that is applied in the skimage random_noise function
+                im_arr_float = img_as_float(im_arr).flatten()
+                var = standard_dev ** 2
+                noise_distribution = np.random.normal(0., var ** 0.5, im_arr_float.shape)
+                count, bins, ignored = plt.hist(noise_distribution, 500)
+                plt.xlabel('Normalized value')
+                plt.ylabel('Amount')
+                plt.xlim([-1.3, 1.3])
+                plt.ylim([0, 7500])
+                plt.title('Gaussian normal distribution with standard deviation {}'
+                  .format(standard_dev), fontsize=12)
+                plt.show()
 
+                # noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
+                # noise_img = (255*noise_img).astype(np.uint8)
+
+                # var_split = str(round(standard_dev, 1)).split('.')
+                # jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
+                # cv2.imwrite(os.path.join(dst, jpg_filename), noise_img)
+                # file_counter()
+
+        # Copy the corresponding txt file, containing the bounding box coordinates 
+        # and class label, and name it equal to its corresponding img 
         elif s.endswith(".txt"):
             for i in range(len(standard_devs)):
                 standard_dev = standard_devs[i]
@@ -76,7 +95,31 @@ def convert_to_grayscale_with_noise(src, dst):
             print("Neither .jpg file or .txt file")
 
         
+def plot_histograms_for_image(img, **kwargs):
 
+    fig = plt.figure(figsize=(14, 6))
+    spec2 = gridspec.GridSpec(ncols=2, nrows=1, figure=fig)
+    f2_ax1 = fig.add_subplot(spec2[0, 0])
+    f2_ax1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    f2_ax1.set_xlabel('image width')
+    f2_ax1.set_ylabel('image height')
+
+    f2_ax2 = fig.add_subplot(spec2[0, 1])
+    f2_ax2.hist(img.ravel(), 256, [0, 256])
+    f2_ax2.set_xlabel('pixel value')
+    f2_ax2.set_ylabel('count')
+    f2_ax2.set_ylim
+
+    for ar in kwargs:
+        if ar == 'gamma':
+            fig.suptitle("Image with Gamma {}"
+              .format(kwargs.get('gamma')),fontsize=18)
+
+        elif ar == 'variance':
+            fig.suptitle("Image with Added Noise with Variance {}"
+              .format(kwargs.get('variance')), fontsize=18)
+            
+    plt.show()
 
 ### Adjust gamma values of images
 def adjust_gamma(src, dst):
@@ -141,7 +184,7 @@ def main():
     # data_dst = './any_data_destination_folder/'
     relative_src = './original_images/' # Or training/test set folders
     relative_grayscale_dst = './images_dst/' # Or training/test set folders
-    relative_grayscale_noise_dst = './images_dst/' # Or training/test set folders
+    relative_grayscale_noise_dst = './grey_noise_images/' # Or training/test set folders
     relative_gamma_dst = './images_dst/' # Or training/test set folders
 
     src = os.path.join(script_dir, relative_src)
@@ -149,9 +192,9 @@ def main():
     grayscale_noise_dst = os.path.join(script_dir, relative_grayscale_noise_dst)
     gamma_dst = os.path.join(script_dir, relative_gamma_dst)
     
-    convert_to_grayscale(src, grayscale_dst)
+    # convert_to_grayscale(src, grayscale_dst)
     convert_to_grayscale_with_noise(src, grayscale_noise_dst)
-    adjust_gamma(src, gamma_dst)
+    # adjust_gamma(src, gamma_dst)
 
     # Uncomment to copy original files to eventual training / test set folder
     # copy_original_files(data_src, dst)

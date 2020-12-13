@@ -16,22 +16,22 @@ def plot_histograms_for_image(img, **kwargs):
     spec2 = gridspec.GridSpec(ncols=2, nrows=1, figure=fig)
     f2_ax1 = fig.add_subplot(spec2[0, 0])
     f2_ax1.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    f2_ax1.set_xlabel('image width')
-    f2_ax1.set_ylabel('image height')
+    f2_ax1.set_xlabel('Image width')
+    f2_ax1.set_ylabel('Image height')
 
     f2_ax2 = fig.add_subplot(spec2[0, 1])
     f2_ax2.hist(img.ravel(), 256, [0, 256])
-    f2_ax2.set_xlabel('pixel value')
-    f2_ax2.set_ylabel('count')
+    f2_ax2.set_xlabel('Pixel value')
+    f2_ax2.set_ylabel('Amount of pixels')
 
     for ar in kwargs:
         if ar == 'gamma':
             fig.suptitle("Image with Gamma {}"
               .format(kwargs.get('gamma')),fontsize=18)
 
-        elif ar == 'variance':
-            fig.suptitle("Image with Added Noise with Variance {}"
-              .format(kwargs.get('variance')), fontsize=18)
+        elif ar == 'std_dev':
+            fig.suptitle("Image with Added Noise with Standard Deviation {}"
+              .format(kwargs.get('std_dev')), fontsize=18)
             
     plt.show()
 
@@ -110,32 +110,32 @@ def main():
     grey_noise_src = os.path.join(script_dir, grey_noise_relative_path)
 
     gamma_values = [0.3, 0.7, 2.0, 3.0]
-    variances = [0.1, 0.2, 0.3]
+    std_devs = [0.1, 0.2, 0.3]
 
-    # Plot histogram for any non-augmented image placed in the folder original_images
-    for index, item in enumerate(os.listdir(original_src)):
-        filename = os.path.join(original_src, item)
-        img = cv2.imread(filename)
-        plot_rbg_histograms(img, type='original')
+    # # Plot histogram for any non-augmented image placed in the folder original_images
+    # for index, item in enumerate(os.listdir(original_src)):
+    #     filename = os.path.join(original_src, item)
+    #     img = cv2.imread(filename)
+    #     plot_rbg_histograms(img, type='original')
         
 
-    # Plot histogram for any grayscale image placed in the folder grey_images
-    for index, item in enumerate(os.listdir(grey_src)):
-        filename = os.path.join(grey_src, item)
-        img = cv2.imread(filename)
-        plot_rbg_histograms(img, type='grey')
+    # # Plot histogram for any grayscale image placed in the folder grey_images
+    # for index, item in enumerate(os.listdir(grey_src)):
+    #     filename = os.path.join(grey_src, item)
+    #     img = cv2.imread(filename)
+    #     plot_rbg_histograms(img, type='grey')
 
-    # Plot histogram for any gamma adjusted image placed in the folder gamma_images
-    for index, item in enumerate(os.listdir(gamma_src)):
-        filename = os.path.join(gamma_src, item)
-        img = cv2.imread(filename)
-        plot_histograms_for_image(img, gamma=gamma_values[index])
+    # # Plot histogram for any gamma adjusted image placed in the folder gamma_images
+    # for index, item in enumerate(os.listdir(gamma_src)):
+    #     filename = os.path.join(gamma_src, item)
+    #     img = cv2.imread(filename)
+    #     plot_histograms_for_image(img, gamma=gamma_values[index])
     
     # Plot histogram for any grayscale image with added noise placed in the folder grey_noise_images
     for index, item in enumerate(os.listdir(grey_noise_src)):
         filename = os.path.join(grey_noise_src, item)
         img = cv2.imread(filename)
-        plot_histograms_for_image(img, variance=variances[index])
+        plot_histograms_for_image(img, std_dev=std_devs[index])
 
 
 if __name__ == "__main__":
