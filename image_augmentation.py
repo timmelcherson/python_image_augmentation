@@ -59,27 +59,27 @@ def convert_to_grayscale_with_noise(src, dst):
             for i in range(len(standard_devs)):
                 standard_dev = standard_devs[i]
 
-                # Uncomment this section to manually plot the same gaussian distribution
-                # that is applied in the skimage random_noise function
-                im_arr_float = img_as_float(im_arr).flatten()
-                var = standard_dev ** 2
-                noise_distribution = np.random.normal(0., var ** 0.5, im_arr_float.shape)
-                count, bins, ignored = plt.hist(noise_distribution, 500)
-                plt.xlabel('Normalized value')
-                plt.ylabel('Amount')
-                plt.xlim([-1.3, 1.3])
-                plt.ylim([0, 7500])
-                plt.title('Gaussian normal distribution with standard deviation {}'
-                  .format(standard_dev), fontsize=12)
-                plt.show()
+                # # Uncomment this section to manually plot the same gaussian distribution
+                # # that is applied in the skimage random_noise function
+                # im_arr_float = img_as_float(im_arr).flatten()
+                # var = standard_dev ** 2
+                # noise_distribution = np.random.normal(0., var ** 0.5, im_arr_float.shape)
+                # count, bins, ignored = plt.hist(noise_distribution, 500)
+                # plt.xlabel('Normalized value')
+                # plt.ylabel('Amount')
+                # plt.xlim([-1.3, 1.3])
+                # plt.ylim([0, 7500])
+                # plt.title('Gaussian normal distribution with standard deviation {}'
+                #   .format(standard_dev), fontsize=12)
+                # plt.show()
 
-                # noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
-                # noise_img = (255*noise_img).astype(np.uint8)
+                noise_img = random_noise(im_arr, mode='gaussian', var=standard_dev**2)
+                noise_img = (255*noise_img).astype(np.uint8)
 
-                # var_split = str(round(standard_dev, 1)).split('.')
-                # jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
-                # cv2.imwrite(os.path.join(dst, jpg_filename), noise_img)
-                # file_counter()
+                var_split = str(round(standard_dev, 1)).split('.')
+                jpg_filename = str(split[0] + "_gn_" + var_split[0] + var_split[1] + "." + split[1])
+                cv2.imwrite(os.path.join(dst, jpg_filename), noise_img)
+                file_counter()
 
         # Copy the corresponding txt file, containing the bounding box coordinates 
         # and class label, and name it equal to its corresponding img 
@@ -192,12 +192,12 @@ def main():
     grayscale_noise_dst = os.path.join(script_dir, relative_grayscale_noise_dst)
     gamma_dst = os.path.join(script_dir, relative_gamma_dst)
     
-    # convert_to_grayscale(src, grayscale_dst)
+    convert_to_grayscale(src, grayscale_dst)
     convert_to_grayscale_with_noise(src, grayscale_noise_dst)
-    # adjust_gamma(src, gamma_dst)
+    adjust_gamma(src, gamma_dst)
 
     # Uncomment to copy original files to eventual training / test set folder
-    # copy_original_files(data_src, dst)
+    copy_original_files(data_src, dst)
     
 
 if __name__ == "__main__":
